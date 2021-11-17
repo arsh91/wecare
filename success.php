@@ -146,8 +146,9 @@ if(isset($_POST['submit'])){
                 $team_memberId= base64_encode($Category_data['Contact'.$i]);
 
                 $link = "https://wecare.equisourceholdings.com/ticket_detail.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId;
-
+                print_r($link);
                 $phoneLink = "https://wecare.equisourceholdings.com/ticket_detail.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId."&phone=1";
+                print_r($phoneLink);
 
 
                 

@@ -71,7 +71,7 @@ if(isset($_POST['TicketNum']) && isset($_POST['eta_radio']) && isset($_POST['tea
 
                 case "custom_date_time":
                 $customEtaDate= explode('-', $_POST['customEtaDate']);
-                $newcustomEtaDate = $customEtaDate[0].'-'.$customEtaDate[2].'-'.$customEtaDate[1];
+                $newcustomEtaDate = $customEtaDate[2].'-'.$customEtaDate[0].'-'.$customEtaDate[1];
 			    $newcustomEtaTime= $_POST['newcustomEtaTime'];
                     $db->query('UPDATE MaintenanceTicket SET ETADate = ?, ETATime = ? , ETA_radio=?, ETATeamMemberID=?  WHERE TicketNum=?', $newcustomEtaDate, $newcustomEtaTime, $eta_radio, $teammemberid, $ticketId);
                     break;

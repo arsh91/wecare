@@ -40,7 +40,11 @@ $teamMemberNo = base64_decode($_GET['teamMemberNo']);
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
 if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1"){
-    $closeTicketData = $db->query('UPDATE MaintenanceTicket SET Notes = ?, ClosedDate = ?, ClosedTime= ?, ClosedBy= ? WHERE TicketNum= ?', $_POST['notes'], $close_date, $close_time, $teamMemberNo, $ticketNumber);
+    
+    $notes = $_POST['notes'];
+    $hoursbilled = $_POST['hoursbilled'];
+    $GuestSatisfactionLevel = $_POST['Guest_Satisfaction_Level_radio'];
+    $closeTicketData = $db->query('UPDATE MaintenanceTicket SET Notes = ?, ClosedDate = ?, ClosedTime= ?, ClosedBy= ?, Hoursbilled=?, Guestsatisfactionlevel=? WHERE TicketNum= ?', $notes, $close_date, $close_time, $teamMemberNo, $hoursbilled,  $GuestSatisfactionLevel, $ticketNumber);
 }
 
 $current_date = date("Y-m-d H:i:s");
@@ -70,6 +74,10 @@ $teamMemberName = $db->query('SELECT * FROM Team WHERE TeamMemberID = ?' , $tick
 
 $teamAdminData = $db->query('SELECT admin FROM Team WHERE TeamMemberID = ?' ,$teamMemberNo)->fetchArray();
 
+//QUERY TO GET TECHNOTES FROM MAINTENENCEASSIGNMENTS
+$technotes = $db->query('SELECT technotes FROM MaintenanceAssignements WHERE CategoryID = ? AND PropertyID=?', $ticketData['Category_Id'], $ticketData['property_Id'])->fetchArray();
+// echo "<pre>"; print_r($technotes);
+
 $eta_custom_date_time = "display:none;";
 $eta_custom_date = $eta_custom_time = '';
 		
@@ -87,7 +95,7 @@ $eta_custom_date = $eta_custom_time = '';
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="message-text" class="col-form-label">Notes:</label>
+                            <label for="message-text" class="col-form-label"><strong>Notes:</strong></label>
                             <textarea class="form-control" name="notes" id="notes" placeholder="Enter your notes"
                                 required></textarea>
                             <div class="notes_text text-right"><span class="notesLength" id="notes_length">250</span>
@@ -95,6 +103,42 @@ $eta_custom_date = $eta_custom_time = '';
                                 remaining </div>
                             <input type="hidden" value="1" name="closeinput">
                         </div>
+                        <div class="form-group">
+                            <label for="Hours-Billed" class="col-form-label"><strong>Hours Billed for Job:</strong></label>
+                            <input class="form-control"  type="number" id="hoursbilled" name="hoursbilled">
+                        </div>
+                        <div class="form-group">
+                            <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
+                            <div class="form-check">
+                                <input
+                                class="form-check-input" type="radio" value="Guest_appeared_satisfied"
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio1">
+                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio1">The Guest appeared satisfied
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                class="form-check-input" type="radio" value="Guest_did_not_appear_satisfied_dissatisfied"
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio2">
+                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio2">The Guest did not appear either satisfied or dissatisfied
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                class="form-check-input" type="radio" value=" Guest_dissatisfied_with_resolution_other issues"
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio3">
+                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio3">The Guest was dissatisfied with this resolution and/or other issues
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input
+                                class="form-check-input" type="radio" value="not_certain"
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4">
+                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I’m not certain of the Guest’s satisfaction level
+                                </label>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -128,7 +172,7 @@ $eta_custom_date = $eta_custom_time = '';
                                         <div class="form-group m-auto">
                                             <a href="http://vacationrentals.equisourceholdings.com/maintainence_tickets.php"
                                                 target="_blank"><button type="button" name="viewticket" id="viewticket"
-                                                    class="btn btn-primary">View Open Tickets</button></a>
+                                                    class="btn btn-primary">View Maintenance Log</button></a>
                                         </div>
                                     </div>
                                     <?php if($teamAdminData['admin'] == 'Y') {?>
@@ -398,7 +442,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div><br>
                                         <div class="assigned_msg">
 
                                         <?php } else{?>
@@ -413,6 +457,12 @@ $eta_custom_date = $eta_custom_time = '';
 
                                             <?php }?>
                                         </div>
+
+                                        <p><span class="titleStyle addReadMore showlesscontent">Tech Notes: </span><?= $technotes["technotes"]; ?> 
+                                        <span class="readMore" title="Click to Show More"> ... Read More</span>
+                                        <span class="readLess" title="Click to Show Less"> Read Less</span>
+                                    </p>
+
                                             <?php if($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] == NULL && $ticketData['ClosedDate'] != NULL ){?>
                                             <div class="form-group pt-2 requestFeedbackBtn ">
                                                     <button type="submit" teamMemberId=<?php echo $teamMemberNo;?> name="requestFeedbackBtn" id="requestFeedbackBtn" value="requestFeedbackBtn" class="btn btn-primary requestFeedback">Request Feedback</button>
@@ -580,7 +630,7 @@ $eta_custom_date = $eta_custom_time = '';
             }
         });
 
-        var dateFormat = "yy-dd-mm",
+        var dateFormat = "mm-dd-yy",
         
             from = $("#eta_custom_date").datepicker({
                 defaultDate: "+1w",
@@ -729,9 +779,9 @@ $eta_custom_date = $eta_custom_time = '';
         });
         $('#customDatetime').click(function() {
             var customEtaDate = $('#eta_custom_date').val();
-            var newcustomEtaDate = moment(customEtaDate,"YYYY-DD-MM").format("DD-MM-YYYY");
+            //var newcustomEtaDate = moment(customEtaDate,"YYYY-DD-MM").format("MM-DD-YYYY");
             var customEtaTime = $('#eta_custom_time').val();
-            var dateTime = newcustomEtaDate+" "+customEtaTime;
+            var dateTime = customEtaDate+" "+customEtaTime;
 
             if (confirm("Please confirm.  You wish to set an ETA of"+" "+dateTime+" "+"for this ticket?")) {
 
@@ -800,18 +850,45 @@ $eta_custom_date = $eta_custom_time = '';
 
 
         });
+        function AddReadMore() {
+           
+            //This limit you can set after how much characters you want to show Read More.
+            var carLmt = 280;
+            // Text to show when text is collapsed
+            var readMoreTxt = " ... Read More";
+            // Text to show when text is expanded
+            var readLessTxt = " Read Less";
+
+
+            //Traverse all selectors with this class and manupulate HTML part to show Read More
+            $(".addReadMore").each(function() {
+                if ($(this).find(".firstSec").length)
+                    return;
+
+                var allstr = $(this).text();
+                if (allstr.length > carLmt) {
+                    var firstSet = allstr.substring(0, carLmt);
+                    var secdHalf = allstr.substring(carLmt, allstr.length);
+                    var strtoadd = firstSet + "<span class='SecSec'>" + secdHalf + "</span><span class='readMore'  title='Click to Show More'>" + readMoreTxt + "</span><span class='readLess' title='Click to Show Less'>" + readLessTxt + "</span>";
+                    $(this).html(strtoadd);
+                }
+
+            });
+            //Read More and Read Less Click Event binding
+            $(document).on("click", ".readMore,.readLess", function() {
+                $(this).closest(".addReadMore").toggleClass("showlesscontent showmorecontent");
+            });
+        }
+        $(function() {
+            //Calling function after Page Load
+            AddReadMore();
+        });
         
 
     });
-    $('.closepage').click(function() {
-           
-        //    var win = window.open('', '_self');
-        //    window.close();
-        //    win.close();
-        //    return false;
-        // if (confirm("Close Window?")) {
+    $('.closepage').click(function() {      
                 close();
-            // }
+           
        });
     </script>
 </body>
