@@ -1,0 +1,117 @@
+.it {
+  height: 100px;
+  margin-left: 10px;
+  width: 100px;
+}
+.btn-rmv1,
+.btn-rmv2,
+.btn-rmv3,
+.btn-rmv4,
+.btn-rmv5 {
+  display: none;
+}
+.rmv {
+  cursor: pointer;
+  color: #fff;
+  border-radius: 30px;
+  border: 1px solid #fff;
+  display: inline-block;
+  background: rgba(255, 0, 0, 1);
+  margin: -5px -10px;
+  position: absolute;
+  font-size: 13px;
+  line-height: 1;
+  padding: 1px 6px  4px 6px;
+}
+
+.rmv:hover {
+  background: rgba(255, 0, 0, 0.5);
+}
+.img_preview {
+  position: relative;
+  padding: 15px;
+  display: none;
+  width: 100%;
+}
+.file_fields{
+width: 100%;
+}
+.divLoading {
+  margin: 0px;
+  display: none;
+  padding: 0px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(0 0 0 / 53%);
+  z-index: 30001;
+}
+.loading {
+  margin-top: 20%;
+  background-color: #fff;
+  padding: 20px;
+  }
+
+.email_error{
+border: 1px solid red !important;
+}
+.success_email{
+border: 1px solid #28a745 !important;
+}
+.was-validated .form-control.custom_val:valid, .was-validated .form-control.custom_val:invalid {
+  background-image: none;
+} 
+  .inner_card_header{
+  width: 70%;
+  }
+  .inner_card_header h4{
+  font-size: 18px;
+  }
+  .inner_card_header ul li{
+    list-style-position: inside;
+  }
+  #errphonemsg{
+    color:red;
+  }
+  .thankyou_card p{
+    margin-bottom: 12px ;
+  }
+.cardDetails .titleStyle {
+    font-weight: 500;
+}
+.show_desktop_view {
+  display: block;
+}
+
+.show_mobile_view {
+  display: none;
+}
+.cat_error{
+  border: 1px solid red !important;
+    }
+  .cat_success{
+    border: 1px solid #28a745 !important;
+    }
+    .reserved_table {
+      max-height: 300px;
+      overflow: hidden;
+      overflow-y: scroll;
+      margin-bottom: 15px;
+  }
+@media screen and (max-width: 768px) {
+
+  .show_desktop_view {
+      display: none;
+  }
+  .show_mobile_view {
+      display: block;
+  }
+
+}
+.lostErrorMsg {
+  font-size: 16px;
+  text-align: center;
+}
+ 
