@@ -40,6 +40,21 @@
   display:block;
 }
 
+.technotesDiv {
+    inline-size: 330px;
+    overflow-wrap: break-word;
+}
+
+    @media only screen{
+    .issueDiscription {
+        text-overflow: ellipsis; /* will make [...] at the end */
+    width: 370px; /* change to your preferences */
+    white-space: nowrap; /* paragraph to one line */
+    overflow:hidden; /* older browsers */
+  }
+}
+
+
 
 </style>
 <body>
@@ -477,39 +492,38 @@ $eta_custom_date = $eta_custom_time = '';
                                             <?php }?>
                                         </div>
                                         <!-- TECH NOTES FIELD -->
-                                        <p><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></p>
+                                        <div class="technotesDiv"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
                                         
                                         <!-- MAINTENENCE HISTORY TOOGLE TABLE  -->
                                         <?php
-                                         $toogleMaintenenceDatas = $db->query('SELECT TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
+                                         $tooglePropertyMaintenenceDatas = $db->query('SELECT TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
 
-                                         
                                           $MaintenenceTable_html = 
-                                          '<div class="form-group">
-                                                <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
+                                          '<div class="form-group radio_filter">
+                                                <label for="maintenence-filter" class="col-form-label"><strong>Filter:</strong></label>
                                                 <div class="form-check">
                                                     <input
-                                                    class="form-check-input" type="radio" value="Guest_appeared_satisfied"
-                                                    name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio1">
-                                                    <label class="form-check-label" for="Guest_Satisfaction_Level_radio1">The Guest appeared satisfied
+                                                    class="form-check-input" type="radio" value="AllProperty"
+                                                    name="maintenence_radio_filter" id="maintenence__property_filter">
+                                                    <label class="form-check-label" for="maintenence__property_filter">All '.$ticketData['Property'] .' Tickets
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input
-                                                    class="form-check-input" type="radio" value="Guest_did_not_appear_satisfied_dissatisfied"
-                                                    name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio2">
-                                                    <label class="form-check-label" for="Guest_Satisfaction_Level_radio2">The Guest did not appear either satisfied or dissatisfied
+                                                    class="form-check-input" type="radio" value="'.$ticketData['Issue'] .'"
+                                                    name="maintenence_radio_filter" id="maintenence__issue_filter">
+                                                    <label class="form-check-label" for="maintenence__issue_filter">Only '.$ticketData['Issue'] .' Tickets
                                                     </label>
                                                 </div>
-                                            </div> <div class="reserved_table">
-                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr>
-                                            
-                                          </tr><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
+                                            </div> 
+                                          
+                                            <div class="reserved_table">
+                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
   
-                                          foreach($toogleMaintenenceDatas as $toogleMaintenenceData){
+                                          foreach($tooglePropertyMaintenenceDatas as $tooglePropertyMaintenenceData){
                                               //echo "<pre>"; print_r($toogleTeamData);
   
-                                          $MaintenenceTable_html .= '<tr><td>'.$toogleMaintenenceData['TicketDate'].'</td><td>'.$toogleMaintenenceData['Issue'].'</td><td>'.$toogleMaintenenceData['IssueDescription'].'</td></tr>';
+                                          $MaintenenceTable_html .= '<tr><td>'.$tooglePropertyMaintenenceData['TicketDate'].'</td><td class="Source">'.$tooglePropertyMaintenenceData['Issue'].'</td><td>'.$tooglePropertyMaintenenceData['IssueDescription'].'</td></tr>';
                                           }
                                           $MaintenenceTable_html.='</tbody></table>  </div>';
                                           
@@ -517,11 +531,38 @@ $eta_custom_date = $eta_custom_time = '';
                                         
                                         <!-- PROPERTY NAME MAINTENENCE HISTORY LINK -->
                                         <p><span class="titleStyle"> <?= $ticketData['Property']; ?> Maintenance History:
-                                            </span><span><a data-toggle="collapse" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                            </span><span><a data-toggle="collapse" class = "property_history" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
                                         </p>
                                         <div class="collapse" id="collapse_maintenance_history">
                                            
                                             <?php echo $MaintenenceTable_html; ?>
+                                          
+                                        </div>
+
+                                        <!-- SAME TICKETS HISTORY TABLE -->
+                                        <?php
+                                        $toogleIssueMaintenenceDatas = $db->query('SELECT Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
+
+                                        $similarTicketsMaintenenceTable_html = 
+                                          '<div class="reserved_table">
+                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
+  
+                                          foreach($toogleIssueMaintenenceDatas as $toogleIssueMaintenenceData){
+                                              //echo "<pre>"; print_r($toogleTeamData);
+  
+                                          $similarTicketsMaintenenceTable_html .= '<tr><td>'.$toogleIssueMaintenenceData['Property'].'</td><td class="Source">'.$toogleIssueMaintenenceData['Issue'].'</td><td class="issueDiscription">'.$toogleIssueMaintenenceData['IssueDescription'].'</td></tr>';
+                                          }
+                                          $similarTicketsMaintenenceTable_html.='</tbody></table>  </div>';
+                                          
+                                        ?>
+                                        <!-- SIMILAR TICKETS FROM OTHER PROPERTIES -->
+
+                                        <p><span class="titleStyle"> Similar Tickets from Other Properties:
+                                            </span><span><a data-toggle="collapse" class = "similar_tickets_history" href="#collapse_similar_tickets_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                        </p>
+                                        <div class="collapse" id="collapse_similar_tickets_history">
+                                           
+                                            <?php echo $similarTicketsMaintenenceTable_html; ?>
                                           
                                         </div>
 
@@ -665,6 +706,7 @@ $eta_custom_date = $eta_custom_time = '';
 <?php } ?>
     <script type="text/javascript">
     $(document).ready(function() {
+                      
         //ETA RADIO BUTTONS DISABLED FUCTION
         $( ".radiobuttons" ).each(function() {
             var DisabledEtaTime=$(this).attr("DisabledEtaTime");
@@ -926,7 +968,7 @@ $eta_custom_date = $eta_custom_time = '';
                 var c = content.substr(0, showChar);
                 var h = content.substr(showChar, content.length - showChar);
 
-                var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+                var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink mb-3">' + moretext + '</a></span>';
 
                 $(this).html(html);
              }
@@ -946,8 +988,23 @@ $eta_custom_date = $eta_custom_time = '';
             return false;
         });
 
-    });
+        //MAINTENENCE HISTORY RADIO FILTER
+        $("input[name=maintenence_radio_filter]").change(function(){
+                    var val = $(this).val();
+                    $('.bodyHide tr').hide();
 
+                    $('.bodyHide td.Source').each(function() {
+                        var value = $(this).text();
+                        
+                        if (value == val || val == "AllProperty") {
+                            $(this).parent().show();
+                        }
+                    });
+
+        });
+
+    });
+    
     $('.closepage').click(function() {      
                 close();
            
