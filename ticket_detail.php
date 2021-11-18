@@ -10,12 +10,14 @@
 
 <head>
 <title>Ticket Detail</title>
+<?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){  ?>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/jquery-ui-datepicker.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <?php } ?>
 </head>
 <style>
 
@@ -30,13 +32,28 @@
 .emailqueue_table thead tr th {
     border: 2px solid #f2f2f2;
 }
+
+.morecontent span {
+  display:none;
+}
+.morelink {
+  display:block;
+}
+
+
 </style>
 <body>
     <?php 
 $close_date = date("Y-m-d");
 $close_time = date("H:i:s");
+if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){
 $ticketNumber = base64_decode($_GET['ticketNum']);
 $teamMemberNo = base64_decode($_GET['teamMemberNo']);
+}
+else{
+    $ticketNumber = $_POST['ticketNum'];
+$teamMemberNo = $_POST['teamMembersNo'];
+}
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
 if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1"){
@@ -150,11 +167,12 @@ $eta_custom_date = $eta_custom_time = '';
         </div>
     </div>
 
-    <section class="ticket_datils  m-4">
+    <section class="ticket_datils">
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
                     <div class="card_wrapper ">
+        <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
                         <div class="brand text-center mb-4">
                             <a href="/"><img src="img/wecarelogo.png" alt="We Care" width="150px"></a>
                         </div>
@@ -186,6 +204,7 @@ $eta_custom_date = $eta_custom_time = '';
                                 </div>
                             </div>
                                     <div class="card-body  m-auto cardDetails">
+                                        <?php } ?>
                                         <p><span class="titleStyle"> Property Name: </span><?= $ticketData['Property']; ?> </p>
                                         <p><span class="titleStyle"> Urgency: </span><?= $ticketData['Urgency']; ?> </p>
                                         <p><span class="titleStyle"> Issue: </span><?= $ticketData['Issue']; ?> </p>
@@ -297,7 +316,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                     Ticket
                                                 </span></p>
                                         </div>
-                                        <div class="eta-radio-container" id="eta_container">
+                                        <div class="eta-radio-container mb-3" id="eta_container">
                                             <div class="form-check">
                                                 <input class="teammember" type="hidden"
                                                     teamMemberId=<?php echo $teamMemberNo;?>>
@@ -442,7 +461,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div><br>
+                                        </div>
                                         <div class="assigned_msg">
 
                                         <?php } else{?>
@@ -457,11 +476,55 @@ $eta_custom_date = $eta_custom_time = '';
 
                                             <?php }?>
                                         </div>
+                                        <!-- TECH NOTES FIELD -->
+                                        <p><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></p>
+                                        
+                                        <!-- MAINTENENCE HISTORY TOOGLE TABLE  -->
+                                        <?php
+                                         $toogleMaintenenceDatas = $db->query('SELECT TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
 
-                                        <p><span class="titleStyle addReadMore showlesscontent">Tech Notes: </span><?= $technotes["technotes"]; ?> 
-                                        <span class="readMore" title="Click to Show More"> ... Read More</span>
-                                        <span class="readLess" title="Click to Show Less"> Read Less</span>
-                                    </p>
+                                         
+                                          $MaintenenceTable_html = 
+                                          '<div class="form-group">
+                                                <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
+                                                <div class="form-check">
+                                                    <input
+                                                    class="form-check-input" type="radio" value="Guest_appeared_satisfied"
+                                                    name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio1">
+                                                    <label class="form-check-label" for="Guest_Satisfaction_Level_radio1">The Guest appeared satisfied
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input
+                                                    class="form-check-input" type="radio" value="Guest_did_not_appear_satisfied_dissatisfied"
+                                                    name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio2">
+                                                    <label class="form-check-label" for="Guest_Satisfaction_Level_radio2">The Guest did not appear either satisfied or dissatisfied
+                                                    </label>
+                                                </div>
+                                            </div> <div class="reserved_table">
+                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr>
+                                            
+                                          </tr><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
+  
+                                          foreach($toogleMaintenenceDatas as $toogleMaintenenceData){
+                                              //echo "<pre>"; print_r($toogleTeamData);
+  
+                                          $MaintenenceTable_html .= '<tr><td>'.$toogleMaintenenceData['TicketDate'].'</td><td>'.$toogleMaintenenceData['Issue'].'</td><td>'.$toogleMaintenenceData['IssueDescription'].'</td></tr>';
+                                          }
+                                          $MaintenenceTable_html.='</tbody></table>  </div>';
+                                          
+                                        ?>
+                                        
+                                        <!-- PROPERTY NAME MAINTENENCE HISTORY LINK -->
+                                        <p><span class="titleStyle"> <?= $ticketData['Property']; ?> Maintenance History:
+                                            </span><span><a data-toggle="collapse" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                        </p>
+                                        <div class="collapse" id="collapse_maintenance_history">
+                                           
+                                            <?php echo $MaintenenceTable_html; ?>
+                                          
+                                        </div>
+
 
                                             <?php if($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] == NULL && $ticketData['ClosedDate'] != NULL ){?>
                                             <div class="form-group pt-2 requestFeedbackBtn ">
@@ -483,6 +546,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                 <div class="assigned_feedback"></div>
                                             
                                             <div id="assigned_membername"></div>
+                                            <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
                                    </div>
                             
                                     <div class="card-footer"> 
@@ -504,6 +568,7 @@ $eta_custom_date = $eta_custom_time = '';
                                     </div>
                             
                         </div>
+                        <?php } ?>
                         <div class="container ticketDetailPics">
                             <div class="row">
                                 <?php if($ticketData['Pic1'] != "" ){?>
@@ -587,7 +652,7 @@ $eta_custom_date = $eta_custom_time = '';
             </div>
         </div>
     </section>
-
+    <?php  if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
     <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
@@ -597,7 +662,7 @@ $eta_custom_date = $eta_custom_time = '';
     <script src="js/moment.js"></script>
     <script src="js/jquery-ui-datepicker.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-
+<?php } ?>
     <script type="text/javascript">
     $(document).ready(function() {
         //ETA RADIO BUTTONS DISABLED FUCTION
@@ -606,7 +671,6 @@ $eta_custom_date = $eta_custom_time = '';
             var eta =$(this).attr("eta");
             var today = new Date();
             var Time = today.getHours();
-            // alert(Time);
             if(DisabledEtaTime <= Time && eta == "today" ){
                 $(this).attr('disabled', 'disabled');  
             }
@@ -684,7 +748,6 @@ $eta_custom_date = $eta_custom_time = '';
                 },
                 success: function(response) {
                     var response = JSON.parse(response);
-                    //console.log(response);
                     if (response.doorCode) {
                         $(".doorcode").html("<span class='titleStyle'>" + " Door code:" +
                             "</span>" + " " + response.doorCode);
@@ -708,9 +771,7 @@ $eta_custom_date = $eta_custom_time = '';
                     $('#eta_container').hide();
 
 
-                    // $('div#assigned_membername').html(
-                    //     "<p class='text-center' style='font-weight:bold; font-size:16px ;'>This ticket has been assigned to you </p>"
-                    // );
+                    
 
 
                 }
@@ -799,10 +860,10 @@ $eta_custom_date = $eta_custom_time = '';
         });
 
         $('.requestFeedback').click(function() {
-            // alert('test');
+            
             var ticket_id = $('.ticket_id').text();
             var teamMemberId = $('.requestFeedback').attr('teamMemberId');
-            //lert(teamMemberId);
+            
 
             $.ajax({
                 type: "POST",
@@ -812,7 +873,7 @@ $eta_custom_date = $eta_custom_time = '';
                     'teamMemberId': teamMemberId
                      },
                      success: function(response) {
-                        //  console.log(response);
+                        
                         var response = JSON.parse(response);
                         if (response.Feedbackrequested) {
                         
@@ -850,42 +911,43 @@ $eta_custom_date = $eta_custom_time = '';
 
 
         });
-        function AddReadMore() {
-           
-            //This limit you can set after how much characters you want to show Read More.
-            var carLmt = 280;
-            // Text to show when text is collapsed
-            var readMoreTxt = " ... Read More";
-            // Text to show when text is expanded
-            var readLessTxt = " Read Less";
-
-
-            //Traverse all selectors with this class and manupulate HTML part to show Read More
-            $(".addReadMore").each(function() {
-                if ($(this).find(".firstSec").length)
-                    return;
-
-                var allstr = $(this).text();
-                if (allstr.length > carLmt) {
-                    var firstSet = allstr.substring(0, carLmt);
-                    var secdHalf = allstr.substring(carLmt, allstr.length);
-                    var strtoadd = firstSet + "<span class='SecSec'>" + secdHalf + "</span><span class='readMore'  title='Click to Show More'>" + readMoreTxt + "</span><span class='readLess' title='Click to Show Less'>" + readLessTxt + "</span>";
-                    $(this).html(strtoadd);
-                }
-
-            });
-            //Read More and Read Less Click Event binding
-            $(document).on("click", ".readMore,.readLess", function() {
-                $(this).closest(".addReadMore").toggleClass("showlesscontent showmorecontent");
-            });
-        }
-        $(function() {
-            //Calling function after Page Load
-            AddReadMore();
-        });
         
+        //Read More/Less Content for TechNotes
+        var showChar = 100;
+        var ellipsestext ="...";
+        var moretext ="Show more";
+        var lesstext ="Show less";
+
+
+        $('.more').each(function() {
+            var content = $(this).html();
+
+            if(content.length > showChar) {
+                var c = content.substr(0, showChar);
+                var h = content.substr(showChar, content.length - showChar);
+
+                var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;&nbsp;<a href="" class="morelink">' + moretext + '</a></span>';
+
+                $(this).html(html);
+             }
+
+        });
+
+        $(".morelink").click(function(){
+            if($(this).hasClass("less")) {
+                $(this).removeClass("less");
+                $(this).html(moretext);
+            } else {
+                $(this).addClass("less");
+                $(this).html(lesstext);
+            }
+            $(this).parent().prev().toggle();
+            $(this).prev().toggle();
+            return false;
+        });
 
     });
+
     $('.closepage').click(function() {      
                 close();
            
