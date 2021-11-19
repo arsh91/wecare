@@ -63,6 +63,8 @@ if(isset($_POST['submit'])){
     $subject = $property. ', ' .$satisfied_radio. ', ' .$issue;
     $propertyId = $_POST['propertyid'];
     $CategoryId = $_POST['categoryid'];
+    $InspectionTicket = $_POST['InspectionTicket'];
+
  
 
     $Duplicatetickets =$db->query("SELECT * FROM MaintenanceTicket WHERE FirstName =? AND Phone= ? AND Issue=? AND IssueDescription =? AND TicketDate >= date(NOW()) - INTERVAL 7 DAY" , $firstname,$phone, $issue,$IssueDescription)->fetchArray();
@@ -125,7 +127,7 @@ if(isset($_POST['submit'])){
     }
 
     // INSERT THE DATA WHEN THE FORM IS SUBMIT AND STORE INTO THE MAINTAINANCE TICKET TABLE
-    $dataRet = $db->query('INSERT into MaintenanceTicket (TicketDate, TicketTime, Property, FirstName, Phone, Urgency, Issue, property_Id, Category_Id ,IssueDescription, Pic1, Pic2, Pic3, Pic4 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $current_date, $current_time, $property, $firstname, $phone, $satisfied_radio, $issue, $propertyId, $CategoryId, $IssueDescription, $file1, $file2, $file3, $file4);
+    $dataRet = $db->query('INSERT into MaintenanceTicket (TicketDate, TicketTime, InspectionTicket, Property, FirstName, Phone, Urgency, Issue, property_Id, Category_Id ,IssueDescription, Pic1, Pic2, Pic3, Pic4 ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $current_date, $current_time, $InspectionTicket, $property, $firstname, $phone, $satisfied_radio, $issue, $propertyId, $CategoryId, $IssueDescription, $file1, $file2, $file3, $file4);
 
     $ticketNum = $db->lastInsertID();
 
