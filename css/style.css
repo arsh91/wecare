@@ -114,7 +114,20 @@ border: 1px solid #28a745 !important;
   font-size: 16px;
   text-align: center;
 }
-.radio_filter{
+/* .radio_filter{
   margin-left: 330px;
-}
- 
+} */
+ .linkTable{
+   max-width: 500px;
+ }
+   @media only screen{
+      .issueDiscription {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2; /* number of lines to show */
+                  line-clamp: 2; 
+          -webkit-box-orient: vertical;
+          line-height: 2.1em;
+    }
+  }

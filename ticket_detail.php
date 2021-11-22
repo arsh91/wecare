@@ -45,14 +45,14 @@
     overflow-wrap: break-word;
 }
 
-    @media only screen{
+    /* /* @media only screen{
     .issueDiscription {
         text-overflow: ellipsis; /* will make [...] at the end */
-    width: 370px; /* change to your preferences */
-    white-space: nowrap; /* paragraph to one line */
-    overflow:hidden; /* older browsers */
-  }
-}
+    /* width: 370px; change to your preferences */
+    /* white-space: nowrap; paragraph to one line */
+    /* overflow:hidden; older browsers */
+  /* } */
+/* } */  
 
 
 
@@ -533,7 +533,7 @@ $eta_custom_date = $eta_custom_time = '';
                                         <p><span class="titleStyle"> <?= $ticketData['Property']; ?> Maintenance History:
                                             </span><span><a data-toggle="collapse" class = "property_history" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
                                         </p>
-                                        <div class="collapse" id="collapse_maintenance_history">
+                                        <div class="collapse linkTable" id="collapse_maintenance_history">
                                            
                                             <?php echo $MaintenenceTable_html; ?>
                                           
@@ -560,7 +560,7 @@ $eta_custom_date = $eta_custom_time = '';
                                         <p><span class="titleStyle"> Similar Tickets from Other Properties:
                                             </span><span><a data-toggle="collapse" class = "similar_tickets_history" href="#collapse_similar_tickets_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
                                         </p>
-                                        <div class="collapse" id="collapse_similar_tickets_history">
+                                        <div class="collapse linkTable" id="collapse_similar_tickets_history">
                                            
                                             <?php echo $similarTicketsMaintenenceTable_html; ?>
                                           
