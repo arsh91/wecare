@@ -47,7 +47,8 @@ $current_date = date("Y-m-d H:i:s");
 $NotificationData = $db->query('SELECT * FROM EmailQueue WHERE TicketNum = ? AND TeamMemberID= ?',$ticketNumber, $teamMemberNo)->fetchArray();
 
 // IF THE LINK IS CLICKED IT WILL UPDATE THE VALUE
-if($NotificationData['NotificationRead'] == NULL && (isset($_GET['phone']) && $_GET['phone'] == "1")){
+
+if(isset($NotificationData['NotificationRead']) && $NotificationData['NotificationRead'] == NULL && (isset($_GET['phone']) && $_GET['phone'] == "1")){
    
     $ticketData = $db->query(' UPDATE EmailQueue SET NotificationRead = ? WHERE ToEmail LIKE "%textmagic.com%" AND TicketNum= ? AND TeamMemberID= ?', $current_date, $ticketNumber, $teamMemberNo);
 }else{
@@ -148,513 +149,518 @@ $eta_custom_date = $eta_custom_time = '';
 
     <section class="ticket_datils">
         <div class="container">
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="card_wrapper ">
-        <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
-                        <div class="brand text-center mb-4">
-                            <a href="/"><img src="img/wecarelogo.png" alt="We Care" width="150px"></a>
-                        </div>
-                        <div class="card col-md-12 m-auto p-0 ticketDetailCard">
-                            <div class="card-header text-center">
+            <div id="accordion">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card_wrapper">
+                <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
+                            <div class="brand text-center mb-4">
+                                <a href="/"><img src="img/wecarelogo.png" alt="We Care" width="150px"></a>
+                            </div>
+                            <div class="card col-md-12 m-auto p-0 ticketDetailCard">
+                                <div class="card-header text-center">
+                                    <div class="row">
+                                        <div class="col-md-4">
+
+                                        </div>
+                                        <div class="col-md-3  p-2">
+                                            Ticket Details
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <div class="form-group m-auto">
+                                                <a href="http://vacationrentals.equisourceholdings.com/maintainence_tickets.php"
+                                                    target="_blank"><button type="button" name="viewticket" id="viewticket"
+                                                        class="btn btn-primary">View Maintenance Log</button></a>
+                                            </div>
+                                        </div>
+                                        <?php if($teamAdminData['admin'] == 'Y') {?>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                            <button type="button" name="emailQueueData" id="emailQueueData"
+                                                        class="btn btn-primary"> Notifications</button>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                                        <div class="card-body  m-auto cardDetails">
+                                            <?php } ?>
+                                            <p><span class="titleStyle"> Property Name: </span><?= $ticketData['Property']; ?> </p>
+                                            <p><span class="titleStyle"> Urgency: </span><?= $ticketData['Urgency']; ?> </p>
+                                            <p><span class="titleStyle"> Issue: </span><?= $ticketData['Issue']; ?> </p>
+                                            <div class="technotesDiv mb-3"><span class="titleStyle"> Issue Description:
+                                                </span><?= $ticketData['IssueDescription']; ?>
+                                        </div>
+                                            <p><span class="titleStyle">First Name: </span><?= $ticketData['FirstName']; ?> </p>
+                                            <p><span class="titleStyle"> Phone: </span><?= $ticketData['Phone']; ?> </p>
+                                            <p><span class="titleStyle"> Ticket Date:
+                                                </span><?= date("m-d-Y", strtotime($ticketData['TicketDate']) ); ?> </p>
+                                            <p><span class="titleStyle"> Ticket Time:
+                                                </span><?= date("h:i A", strtotime($ticketData['TicketTime']) ); ?> </p>
+                                            <p><span class="titleStyle"> Ticket Number:
+                                                </span><span class="ticket_id"><?= $ticketData['TicketNum']; ?> </span></p>
+                                            <p><span class="titleStyle"> Address:
+                                                </span>
+                                                <a target="_blank" href="https://www.google.com/maps/place/<?php echo
+                                                    str_replace(' ', '+', $address);?>">
+                                                    <?= $address;
+                                                ?> </a>
+                                            </p>
+                                            <p><span class="titleStyle"> Gate code:
+                                                </span><?= $PropertyAddress['GateCode']; ?>
+                                            </p>
+
+                                            <p class="doorcode">
+                                            </p>
+                                            <?php
+                                            if($ticketData['ETATeamMemberID'] > 0 && $teamMemberName['ReleaseDoorCode'] == "Y"){
+                                                ?>
+                                            <p><span class="titleStyle"> Door code:
+                                                </span><?= $PropertyAddress['DoorCode']; ?>
+                                            </p>
+
+                                            <?php
+                                            }
+                                            $file = $PropertyAddress['ical'];
+                                            $obj = new ics();
+                                            $icsEvents = $obj->getIcsEventsAsArray( $file );
+                                            
+                                                unset( $icsEvents [1] );
+                                                $checkOutDate = "";
+                                                $table_html = '<table class="table table-bordered table-striped"><thead><tr><th> Event </th><th> Check In </th><th> Check Out </th></tr></thead><tbody>';
+                                                //echo "<pre>"; print_r($icsEvents);//die();
+                                            
+                                                date_default_timezone_set("America/Chicago");
+                                                $current_time = date("H");
+                                                $current_date = date("m/d/Y");
+                                                $nextFlag = false;
+                                                foreach( $icsEvents as $icsEvent){
+                                                    $start = isset( $icsEvent ['DTSTART;VALUE=DATE'] ) ? $icsEvent ['DTSTART;VALUE=DATE'] : $icsEvent ['DTSTART'];
+                                                    $startDt = new DateTime ( $start );
+                                                    $startDate = $startDt->format ( 'm/d/Y' );
+                                                    $end = isset( $icsEvent ['DTEND;VALUE=DATE'] ) ? $icsEvent ['DTEND;VALUE=DATE'] : $icsEvent ['DTEND'];
+                                                    $endDt = new DateTime ( $end );
+                                                    $endDate = $endDt->format ( 'm/d/Y' );
+                                                    $eventName = $icsEvent['SUMMARY'];
+                                                    $table_html .= '<tr><td>'.$eventName.'</td><td>'.date('Y-m-d',strtotime($startDate)).'</td><td>'.date('Y-m-d',strtotime($endDate)).'</td></tr>';
+                                                    if( $nextFlag){
+                                                        $checkOutDate = date("m-d-Y", strtotime($endDate));
+                                                    }
+                                                    if(strtotime($endDate) == strtotime($current_date)){
+                                                        if( $current_time < 14){
+                                                            $checkOutDate = date("m-d-Y", strtotime($endDate));
+                                                        }else if($current_time >= 14){
+                                                            $nextFlag = true;
+                                                        }
+                                                    } else if($checkOutDate == "" && (strtotime($endDate) > strtotime($current_date))) {
+                                                        $checkOutDate = date("m-d-Y", strtotime($endDate));
+                                                    } else {
+                                                        $nextFlag = false;
+                                                    }
+                                            }
+                                            $table_html.='</tbody></table>';
+                                            ?>
+                                            <p><span class="titleStyle"> Next Check Out Date: </span><span class="nextCheckoutDateValue"> <?php 
+                                            if(!empty($checkOutDate)){
+                                                echo $checkOutDate;
+                                            }
+                                            ?>
+                                                </span>
+                                            </p>
+
+                                            <p><span class="titleStyle"> Calendar:
+                                                </span><span><a data-toggle="collapse" href="#collapse_reservedTable" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                            </p>
+                                            <div class="collapse" id="collapse_reservedTable" data-parent="#accordion">
+                                                <div class="reserved_table">
+                                                <?php echo $table_html; ?>
+                                                </div>
+                                            </div>
+                                            
+                                            <?php if($ticketData['ClosedDate'] != "" || $ticketData['ClosedDate'] != NULL) { ?>
+                                            <p><span class="titleStyle"> Ticket Closed Date:
+                                                </span><?= $ticketData['ClosedDate']; ?> </p>
+                                            <p><span class="titleStyle"> Ticket Closed Time:
+                                                </span><?= $ticketData['ClosedTime']; ?> </p>
+                                            <p><span class="titleStyle"> Ticket Closed By:
+                                                </span><?= $teamMemberData['Fname']." ". $teamMemberData['Lname']; ?> </p>
+                                            <p><span class="titleStyle"> Notes:
+                                                </span><?= $ticketData['Notes']; ?> </p>
+                                            <?php } if($ticketData['ETATeamMemberID'] == 0) { ?>
+                                            <div>
+                                                <p><span class="titleStyle">Assigned to:</span><span class="assignedTo">
+                                                        Unassigned
+                                                        Ticket
+                                                    </span></p>
+                                                <p><span class="titleStyle">ETA:</span><span class="etaDateTime"> Unassigned
+                                                        Ticket
+                                                    </span></p>
+                                            </div>
+                                            <div class="eta-radio-container mb-3" id="eta_container">
+                                                <div class="form-check">
+                                                    <input class="teammember" type="hidden"
+                                                        teamMemberId=<?php echo $teamMemberNo;?>>
+                                                    <input class="form-check-input radiobutton" type="radio" eta="today" etatime ="2_hours" value="resolve_2_hours"
+                                                        name="eta_radio" id="resolve_2_hours"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_2_hours">
+                                                        I can resolve within 2 hours
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="today" etatime="4_hours"value="resolve_4_hours"
+                                                        name="eta_radio" id="resolve_4_hours"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_4_hours">
+                                                        I can resolve within 4 hours
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "10" etatime="10:00 AM" value="resolve_today_10am"
+                                                        name="eta_radio" id="resolve_today_10am"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_today_10am">
+                                                        I can resolve today by 10 AM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "12" etatime="12:00 PM" value="resolve_today_12noon"
+                                                        name="eta_radio" id="resolve_today_12noon"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_today_12noon">
+                                                    I can resolve today by 12 NOON
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "14" etatime="02:00 PM"
+                                                        value="resolve_today_2pm" name="eta_radio" id="resolve_today_2pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_today_2pm">
+                                                    I can resolve today by 2 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "18" etatime="06:00 PM"
+                                                        value="resolve_today_6pm" name="eta_radio" id="resolve_today_6pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_today_6pm">
+                                                    I can resolve today by 6 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "21"
+                                                    etatime="09:00 PM"
+                                                    value="resolve_today_9pm" name="eta_radio" id="resolve_today_9pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_today_9pm">
+                                                    I can resolve today by 9 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="tomorrow"  etatime="10:00 AM" value="resolve_tomorrow_10am" name="eta_radio" id="resolve_tomorrow_10am"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_tomorrow_10am">
+                                                    I can resolve tomorrow by 10 AM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="12:00 PM"
+                                                        value="resolve_tomorrow_12noon" name="eta_radio" id="resolve_tomorrow_12noon"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_tomorrow_12noon">
+                                                    I can resolve tomorrow by 12 NOON
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="02:00 PM"
+                                                        value="resolve_tomorrow_2pm" name="eta_radio" id="resolve_tomorrow_2pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_tomorrow_2pm">
+                                                    I can resolve tomorrow by 2 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="06:00 PM"
+                                                        value="resolve_tomorrow_6pm" name="eta_radio" id="resolve_tomorrow_6pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_tomorrow_6pm">
+                                                    I can resolve tomorrow by 6 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="09:00 PM"
+                                                        value="resolve_tomorrow_9pm" name="eta_radio" id="resolve_tomorrow_9pm"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_tomorrow_9pm">
+                                                    I can resolve tomorrow by 9 PM
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton" type="radio" eta="nextTurn" etatime="04:00 PM"
+                                                        value="resolve_nextturn" name="eta_radio" id="resolve_nextturn"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="resolve_nextturn">
+                                                        I can resolve at next turn
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton unable_resolve_radio" type="radio"
+                                                        value="unable_resolve" name="unable_resolve_eta_radio" id="unable_resolve"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="unable_resolve">
+                                                        Unable/unwilling to resolve
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input radiobutton custom_date_time" type="radio"
+                                                        value="custom_date_time" name="custom_eta_radio" id="custom_date_time"
+                                                        data-id=<?php echo $ticketData['TicketNum']; ?>>
+                                                    <label class="form-check-label" for="custom_date_time">
+                                                        Custom date and time
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <!-- CUSTOM ETA CODE -->
+                                            <div class="date-range-form form-group custom_field" style="<?php echo $eta_custom_date_time; ?>">
+                                                <div class="form-group">
+                                                    <div class="row" >
+                                                        <div class="col">
+                                                            <input type="text" class="form-control" placeholder="ETA Date" id="eta_custom_date"
+                                                                name="eta_custom_date" value="<?= $eta_custom_date ?>">
+                                                        </div>
+                                                        <div class="col">
+                                                            <input type="text" class="form-control" placeholder="ETA Time" id="eta_custom_time"
+                                                                name="eta_custom_time" value="<?= $eta_custom_time ?>">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <div class="row">
+                                                        <div class="col text-center">
+                                                            <button type="submit" teamMemberId=<?php echo $teamMemberNo;?> id="customDatetime" class="btn btn-primary">Save</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="assigned_msg">
+
+                                            <?php } else{?>
+                                            <div>
+                                                <p><span class="titleStyle">Assigned to:</span>
+                                                    <span><?php echo $teamMemberName['Fname']." ". $teamMemberName['Lname']; ?>
+                                                    </span>
+                                                </p>
+                                                <p><span class="titleStyle">ETA:</span>
+                                                    <span><?php echo date("m-d-Y", strtotime($ticketData['ETADate']) )." ".date("h:i A", strtotime($ticketData['ETATime']) ); ?></span>
+                                                </p>
+
+                                                <?php }?>
+                                            </div>
+                                            <!-- TECH NOTES FIELD -->
+                                            <?php
+                                            if(isset($technotes["technotes"]) && $technotes["technotes"] != " "){
+                                                ?>
+                                            <div class="technotesDiv mb-3"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
+                                            <?php }?>
+                                            <!-- MAINTENENCE HISTORY TOOGLE TABLE  -->
+                                            <?php
+                                            $tooglePropertyMaintenenceDatas = $db->query('SELECT TicketNum, TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
+                                            
+                                            $MaintenenceTable_html = 
+                                            '<div class="form-group radio_filter">
+                                                    <label for="maintenence-filter" class="col-form-label"><strong>Filter:</strong></label>
+                                                    <div class="form-check">
+                                                        <input
+                                                        class="form-check-input" type="radio" value="AllProperty"
+                                                        name="maintenence_radio_filter" id="maintenence__property_filter">
+                                                        <label class="form-check-label" for="maintenence__property_filter">All '.$ticketData['Property'] .' Tickets
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input
+                                                        class="form-check-input" type="radio" value="'.$ticketData['Issue'] .'"
+                                                        name="maintenence_radio_filter" id="maintenence__issue_filter">
+                                                        <label class="form-check-label" for="maintenence__issue_filter">Only '.$ticketData['Issue'] .' Tickets
+                                                        </label>
+                                                    </div>
+                                                </div> 
+                                            
+                                                <div class="reserved_table">
+                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
+    
+                                            foreach($tooglePropertyMaintenenceDatas as $tooglePropertyMaintenenceData){
+                                                //echo "<pre>"; print_r($toogleTeamData);
+                                                $issueDiscription = $tooglePropertyMaintenenceData['IssueDescription'];
+                                                $ticket_id = base64_encode($tooglePropertyMaintenenceData['TicketNum']);
+                                                
+                                                $newIssueDiscription = strlen($issueDiscription) > 50 ? substr($issueDiscription,0,50)."..." : $issueDiscription;
+                                            $MaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['TicketDate'].'</a></td><td class="Source"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['Issue'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$newIssueDiscription.'</a></td></tr>';
+                                            }
+                                            $MaintenenceTable_html.='</tbody></table>  </div>';
+                                            
+                                            ?>
+                                            
+                                            <!-- PROPERTY NAME MAINTENENCE HISTORY LINK -->
+                                            <p><span class="titleStyle"> <?= $ticketData['Property']; ?> Maintenance History:
+                                                </span><span><a data-toggle="collapse" class = "property_history" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                            </p>
+                                            <div class="collapse linkTable" id="collapse_maintenance_history" data-parent="#accordion">
+                                            
+                                                <?php echo $MaintenenceTable_html; ?>
+                                            
+                                            </div>
+
+                                            <!-- SAME TICKETS HISTORY TABLE -->
+                                            <?php
+                                            $toogleIssueMaintenenceDatas = $db->query('SELECT TicketNum, Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
+                                            
+                                            $similarTicketsMaintenenceTable_html = 
+                                            '<div class="reserved_table">
+                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
+    
+                                            foreach($toogleIssueMaintenenceDatas as $toogleIssueMaintenenceData){
+                                                //echo "<pre>"; print_r($toogleTeamData);
+                                                $issueticket_id = base64_encode($toogleIssueMaintenenceData['TicketNum']);
+                                            $similarTicketsMaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Property'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Issue'].'</a></td><td class="issueDiscription"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['IssueDescription'].'</a></td></tr>';
+                                            }
+                                            $similarTicketsMaintenenceTable_html.='</tbody></table>  </div>';
+                                            
+                                            ?>
+                                            <!-- SIMILAR TICKETS FROM OTHER PROPERTIES -->
+
+                                            <p><span class="titleStyle"> Similar Tickets from Other Properties:
+                                                </span><span><a data-toggle="collapse" class = "similar_tickets_history" href="#collapse_similar_tickets_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
+                                            </p>
+                                            <div class="collapse linkTable" id="collapse_similar_tickets_history" data-parent="#accordion">
+                                            
+                                                <?php echo $similarTicketsMaintenenceTable_html; ?>
+                                            
+                                            </div>
+
+
+                                                <?php if($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] == NULL && $ticketData['ClosedDate'] != NULL ){?>
+                                                <div class="form-group pt-2 requestFeedbackBtn ">
+                                                        <button type="submit" teamMemberId=<?php echo $teamMemberNo;?> name="requestFeedbackBtn" id="requestFeedbackBtn" value="requestFeedbackBtn" class="btn btn-primary requestFeedback">Request Feedback</button>
+                                                </div>
+                                                    <?php } elseif($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] != NULL && $ticketData['ClosedDate'] != NULL) { ?>
+                                                    <div class='form-group pt-2'>
+                                                        <p><span class="titleStyle">Feedback Requested :</span>
+                                                        <span><?php echo date("m-d-Y h:i A", strtotime($ticketData['Feedbackrequested']) ); ?>
+                                                        </span>
+                                                    </p>
+                                                    </div>
+                                                    <?php } ?>
+                                                    <div class='form-group feedbackDateTime pt-2' style="display:none;">
+                                                        <p><span class="titleStyle">Feedback Requested :</span>
+                                                        <span class="showFeedbackData"></span>
+                                                    </p>
+                                                    </div>
+                                                    <div class="assigned_feedback"></div>
+                                                
+                                                <div id="assigned_membername"></div>
+                                                <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
+                                    </div>
+                                
+                                        <div class="card-footer"> 
+                                            <div class="row"> 
+                                                <div class="col-md-4">
+                                                </div>     
+                                                <div class="form-group  text-center col-md-4 ">
+                                                    <?php   if($ticketData['ClosedDate'] == "" || $ticketData['ClosedDate'] == NULL ) { ?>         
+                                                    <button type="button" name="CloseTicket" id="ticketClose"
+                                                        class="btn btn-primary closedticket mr-2">Close Ticket</button>
+                                                <?php } ?>
+                                                    <button type="button" name="ClosePage" id="closePage"
+                                                        class="btn btn-primary closepage">Close Page</button>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                </div>  
+                                            
+                                        </div>
+                                
+                            </div>
+                            <?php } ?>
+                            <div class="container ticketDetailPics">
                                 <div class="row">
-                                    <div class="col-md-4">
-
-                                    </div>
-                                    <div class="col-md-3  p-2">
-                                        Ticket Details
-                                    </div>
-
-                                    <div class="col-md-3">
-                                        <div class="form-group m-auto">
-                                            <a href="http://vacationrentals.equisourceholdings.com/maintainence_tickets.php"
-                                                target="_blank"><button type="button" name="viewticket" id="viewticket"
-                                                    class="btn btn-primary">View Maintenance Log</button></a>
+                                    <?php if($ticketData['Pic1'] != "" ){?>
+                                    <div class="card col-md-3 mt-2 p-0 ">
+                                        <div class="card-body text-center">
+                                            <img src="<?= $ticketData['Pic1']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
-                                    <?php if($teamAdminData['admin'] == 'Y') {?>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                           <button type="button" name="emailQueueData" id="emailQueueData"
-                                                    class="btn btn-primary"> Notifications</button>
+                                    <?php } if($ticketData['Pic2'] != "" ){ ?>
+                                    <div class="card col-md-3 mt-2 p-0">
+                                        <div class="card-body text-center">
+                                            <img src="<?= $ticketData['Pic2']; ?>" alt="" width="200px">
+                                        </div>
+                                    </div>
+                                    <?php } if($ticketData['Pic3'] != "" ){ ?>
+                                    <div class="card col-md-3 mt-2 p-0">
+                                        <div class="card-body text-center">
+                                            <img src="<?= $ticketData['Pic3']; ?>" alt="" width="200px">
+                                        </div>
+                                    </div>
+                                    <?php } if($ticketData['Pic4'] != "" ){ ?>
+                                    <div class="card col-md-3 mt-2 p-0">
+                                        <div class="card-body text-center">
+                                            <img src="<?= $ticketData['Pic4']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } ?>
                                 </div>
                             </div>
-                                    <div class="card-body  m-auto cardDetails">
-                                        <?php } ?>
-                                        <p><span class="titleStyle"> Property Name: </span><?= $ticketData['Property']; ?> </p>
-                                        <p><span class="titleStyle"> Urgency: </span><?= $ticketData['Urgency']; ?> </p>
-                                        <p><span class="titleStyle"> Issue: </span><?= $ticketData['Issue']; ?> </p>
-                                        <p><span class="titleStyle"> Issue Description:
-                                            </span><?= $ticketData['IssueDescription']; ?>
-                                        </p>
-                                        <p><span class="titleStyle">First Name: </span><?= $ticketData['FirstName']; ?> </p>
-                                        <p><span class="titleStyle"> Phone: </span><?= $ticketData['Phone']; ?> </p>
-                                        <p><span class="titleStyle"> Ticket Date:
-                                            </span><?= date("m-d-Y", strtotime($ticketData['TicketDate']) ); ?> </p>
-                                        <p><span class="titleStyle"> Ticket Time:
-                                            </span><?= date("h:i A", strtotime($ticketData['TicketTime']) ); ?> </p>
-                                        <p><span class="titleStyle"> Ticket Number:
-                                            </span><span class="ticket_id"><?= $ticketData['TicketNum']; ?> </span></p>
-                                        <p><span class="titleStyle"> Address:
-                                            </span>
-                                            <a target="_blank" href="https://www.google.com/maps/place/<?php echo
-                                                str_replace(' ', '+', $address);?>">
-                                                <?= $address;
-                                            ?> </a>
-                                        </p>
-                                        <p><span class="titleStyle"> Gate code:
-                                            </span><?= $PropertyAddress['GateCode']; ?>
-                                        </p>
 
-                                        <p class="doorcode">
-                                        </p>
-                                        <?php
-                                        if($ticketData['ETATeamMemberID'] > 0 && $teamMemberName['ReleaseDoorCode'] == "Y"){
+                                            <?php
+                                            if($teamAdminData['admin'] == 'Y'){
+                                            // GET TEAM DATA FOR TOOGLE TABLE
+                                            $toogleTeamDatas = $db->query('SELECT BodyText , ToEmail , TeamMemberId , Status , ScheduleDate , TImeDateSent , NotificationRead FROM EmailQueue WHERE TicketNum = ?' ,$ticketNumber)->fetchAll();
+
+                                        //EMAIL QUEUE TOOGLE TABLE 
+                                            $emailQueueTable_html = '<table class="table table-bordered table-striped emailqueue_table"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> BodyText</th><th>ToEmail</th><th>TeamMemberId</th><th>Status</th><th>ScheduleDate</th><th>  TImeDateSent</th><th>NotificationRead</th></tr></thead><tbody>';
+
+                                            foreach($toogleTeamDatas as $toogleTeamData){
+                                                //echo "<pre>"; print_r($toogleTeamData);
+
+                                            $emailQueueTable_html .= '<tr><td>'.$toogleTeamData['BodyText'].'</td><td>'.$toogleTeamData['ToEmail'].'</td><td>'.$toogleTeamData['TeamMemberId'].'</td><td>'.$toogleTeamData['Status'].'</td><td>'.$toogleTeamData['ScheduleDate'].'</td><td>'.$toogleTeamData['TImeDateSent'].'</td><td>'.$toogleTeamData['NotificationRead'].'</td></tr>';
+                                            }
+                                            $emailQueueTable_html.='</tbody></table>';
+                                            
                                             ?>
-                                        <p><span class="titleStyle"> Door code:
-                                            </span><?= $PropertyAddress['DoorCode']; ?>
-                                        </p>
-
-                                        <?php
-                                        }
-                                        $file = $PropertyAddress['ical'];
-                                        $obj = new ics();
-                                        $icsEvents = $obj->getIcsEventsAsArray( $file );
-                                        
-                                            unset( $icsEvents [1] );
-                                            $checkOutDate = "";
-                                            $table_html = '<table class="table table-bordered table-striped"><thead><tr><th> Event </th><th> Check In </th><th> Check Out </th></tr></thead><tbody>';
-                                            //echo "<pre>"; print_r($icsEvents);//die();
-                                         
-                                            date_default_timezone_set("America/Chicago");
-                                            $current_time = date("H");
-                                            $current_date = date("m/d/Y");
-                                             $nextFlag = false;
-                                            foreach( $icsEvents as $icsEvent){
-                                                $start = isset( $icsEvent ['DTSTART;VALUE=DATE'] ) ? $icsEvent ['DTSTART;VALUE=DATE'] : $icsEvent ['DTSTART'];
-                                                $startDt = new DateTime ( $start );
-                                                $startDate = $startDt->format ( 'm/d/Y' );
-                                                $end = isset( $icsEvent ['DTEND;VALUE=DATE'] ) ? $icsEvent ['DTEND;VALUE=DATE'] : $icsEvent ['DTEND'];
-                                                $endDt = new DateTime ( $end );
-                                                $endDate = $endDt->format ( 'm/d/Y' );
-                                                $eventName = $icsEvent['SUMMARY'];
-                                                $table_html .= '<tr><td>'.$eventName.'</td><td>'.date('Y-m-d',strtotime($startDate)).'</td><td>'.date('Y-m-d',strtotime($endDate)).'</td></tr>';
-                                                if( $nextFlag){
-                                                    $checkOutDate = date("m-d-Y", strtotime($endDate));
-                                                }
-                                                if(strtotime($endDate) == strtotime($current_date)){
-                                                    if( $current_time < 14){
-                                                        $checkOutDate = date("m-d-Y", strtotime($endDate));
-                                                    }else if($current_time >= 14){
-                                                        $nextFlag = true;
-                                                    }
-                                                } else if($checkOutDate == "" && (strtotime($endDate) > strtotime($current_date))) {
-                                                    $checkOutDate = date("m-d-Y", strtotime($endDate));
-                                                } else {
-                                                    $nextFlag = false;
-                                                }
-                                        }
-                                        $table_html.='</tbody></table>';
-                                        ?>
-                                        <p><span class="titleStyle"> Next Check Out Date: </span><span class="nextCheckoutDateValue"> <?php 
-                                        if(!empty($checkOutDate)){
-                                            echo $checkOutDate;
-                                        }
-                                        ?>
-                                            </span>
-                                        </p>
-
-                                        <p><span class="titleStyle"> Calendar:
-                                            </span><span><a data-toggle="collapse" href="#collapse_reservedTable" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
-                                        </p>
-                                        <div class="collapse" id="collapse_reservedTable">
-                                            <div class="reserved_table">
-                                            <?php echo $table_html; ?>
-                                            </div>
-                                        </div>
-                                        
-                                        <?php if($ticketData['ClosedDate'] != "" || $ticketData['ClosedDate'] != NULL) { ?>
-                                        <p><span class="titleStyle"> Ticket Closed Date:
-                                            </span><?= $ticketData['ClosedDate']; ?> </p>
-                                        <p><span class="titleStyle"> Ticket Closed Time:
-                                            </span><?= $ticketData['ClosedTime']; ?> </p>
-                                        <p><span class="titleStyle"> Ticket Closed By:
-                                            </span><?= $teamMemberData['Fname']." ". $teamMemberData['Lname']; ?> </p>
-                                        <p><span class="titleStyle"> Notes:
-                                            </span><?= $ticketData['Notes']; ?> </p>
-                                        <?php } if($ticketData['ETATeamMemberID'] == 0) { ?>
-                                        <div>
-                                            <p><span class="titleStyle">Assigned to:</span><span class="assignedTo">
-                                                    Unassigned
-                                                    Ticket
-                                                </span></p>
-                                            <p><span class="titleStyle">ETA:</span><span class="etaDateTime"> Unassigned
-                                                    Ticket
-                                                </span></p>
-                                        </div>
-                                        <div class="eta-radio-container mb-3" id="eta_container">
-                                            <div class="form-check">
-                                                <input class="teammember" type="hidden"
-                                                    teamMemberId=<?php echo $teamMemberNo;?>>
-                                                <input class="form-check-input radiobutton" type="radio" eta="today" etatime ="2_hours" value="resolve_2_hours"
-                                                    name="eta_radio" id="resolve_2_hours"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_2_hours">
-                                                    I can resolve within 2 hours
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="today" etatime="4_hours"value="resolve_4_hours"
-                                                    name="eta_radio" id="resolve_4_hours"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_4_hours">
-                                                    I can resolve within 4 hours
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "10" etatime="10:00 AM" value="resolve_today_10am"
-                                                    name="eta_radio" id="resolve_today_10am"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_today_10am">
-                                                    I can resolve today by 10 AM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "12" etatime="12:00 PM" value="resolve_today_12noon"
-                                                    name="eta_radio" id="resolve_today_12noon"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_today_12noon">
-                                                I can resolve today by 12 NOON
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "14" etatime="02:00 PM"
-                                                    value="resolve_today_2pm" name="eta_radio" id="resolve_today_2pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_today_2pm">
-                                                I can resolve today by 2 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "18" etatime="06:00 PM"
-                                                    value="resolve_today_6pm" name="eta_radio" id="resolve_today_6pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_today_6pm">
-                                                I can resolve today by 6 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobuttons" type="radio" eta="today" DisabledEtaTime= "21"
-                                                etatime="09:00 PM"
-                                                value="resolve_today_9pm" name="eta_radio" id="resolve_today_9pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_today_9pm">
-                                                I can resolve today by 9 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="tomorrow"  etatime="10:00 AM" value="resolve_tomorrow_10am" name="eta_radio" id="resolve_tomorrow_10am"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_tomorrow_10am">
-                                                I can resolve tomorrow by 10 AM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="12:00 PM"
-                                                    value="resolve_tomorrow_12noon" name="eta_radio" id="resolve_tomorrow_12noon"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_tomorrow_12noon">
-                                                I can resolve tomorrow by 12 NOON
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="02:00 PM"
-                                                    value="resolve_tomorrow_2pm" name="eta_radio" id="resolve_tomorrow_2pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_tomorrow_2pm">
-                                                I can resolve tomorrow by 2 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="06:00 PM"
-                                                    value="resolve_tomorrow_6pm" name="eta_radio" id="resolve_tomorrow_6pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_tomorrow_6pm">
-                                                I can resolve tomorrow by 6 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="tomorrow" etatime="09:00 PM"
-                                                    value="resolve_tomorrow_9pm" name="eta_radio" id="resolve_tomorrow_9pm"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_tomorrow_9pm">
-                                                I can resolve tomorrow by 9 PM
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton" type="radio" eta="nextTurn" etatime="04:00 PM"
-                                                    value="resolve_nextturn" name="eta_radio" id="resolve_nextturn"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="resolve_nextturn">
-                                                    I can resolve at next turn
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton unable_resolve_radio" type="radio"
-                                                    value="unable_resolve" name="unable_resolve_eta_radio" id="unable_resolve"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="unable_resolve">
-                                                    Unable/unwilling to resolve
-                                                </label>
-                                            </div>
-                                            <div class="form-check">
-                                                <input class="form-check-input radiobutton custom_date_time" type="radio"
-                                                    value="custom_date_time" name="custom_eta_radio" id="custom_date_time"
-                                                    data-id=<?php echo $ticketData['TicketNum']; ?>>
-                                                <label class="form-check-label" for="custom_date_time">
-                                                    Custom date and time
-                                                </label>
-                                            </div>
-                                        </div>
-                                        <!-- CUSTOM ETA CODE -->
-                                        <div class="date-range-form form-group custom_field" style="<?php echo $eta_custom_date_time; ?>">
-                                            <div class="form-group">
-                                                <div class="row" >
-                                                    <div class="col">
-                                                        <input type="text" class="form-control" placeholder="ETA Date" id="eta_custom_date"
-                                                            name="eta_custom_date" value="<?= $eta_custom_date ?>">
-                                                    </div>
-                                                    <div class="col">
-                                                        <input type="text" class="form-control" placeholder="ETA Time" id="eta_custom_time"
-                                                            name="eta_custom_time" value="<?= $eta_custom_time ?>">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="row">
-                                                    <div class="col text-center">
-                                                        <button type="submit" teamMemberId=<?php echo $teamMemberNo;?> id="customDatetime" class="btn btn-primary">Save</button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="assigned_msg">
-
-                                        <?php } else{?>
-                                        <div>
-                                            <p><span class="titleStyle">Assigned to:</span>
-                                                <span><?php echo $teamMemberName['Fname']." ". $teamMemberName['Lname']; ?>
-                                                </span>
-                                            </p>
-                                            <p><span class="titleStyle">ETA:</span>
-                                                <span><?php echo date("m-d-Y", strtotime($ticketData['ETADate']) )." ".date("h:i A", strtotime($ticketData['ETATime']) ); ?></span>
-                                            </p>
-
-                                            <?php }?>
-                                        </div>
-                                        <!-- TECH NOTES FIELD -->
-                                        <div class="technotesDiv mb-3"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
-                                        
-                                        <!-- MAINTENENCE HISTORY TOOGLE TABLE  -->
-                                        <?php
-                                         $tooglePropertyMaintenenceDatas = $db->query('SELECT TicketNum, TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
-                                         
-                                          $MaintenenceTable_html = 
-                                          '<div class="form-group radio_filter">
-                                                <label for="maintenence-filter" class="col-form-label"><strong>Filter:</strong></label>
-                                                <div class="form-check">
-                                                    <input
-                                                    class="form-check-input" type="radio" value="AllProperty"
-                                                    name="maintenence_radio_filter" id="maintenence__property_filter">
-                                                    <label class="form-check-label" for="maintenence__property_filter">All '.$ticketData['Property'] .' Tickets
-                                                    </label>
-                                                </div>
-                                                <div class="form-check">
-                                                    <input
-                                                    class="form-check-input" type="radio" value="'.$ticketData['Issue'] .'"
-                                                    name="maintenence_radio_filter" id="maintenence__issue_filter">
-                                                    <label class="form-check-label" for="maintenence__issue_filter">Only '.$ticketData['Issue'] .' Tickets
-                                                    </label>
-                                                </div>
-                                            </div> 
-                                          
-                                            <div class="reserved_table">
-                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
-  
-                                          foreach($tooglePropertyMaintenenceDatas as $tooglePropertyMaintenenceData){
-                                              //echo "<pre>"; print_r($toogleTeamData);
-                                              $issueDiscription = $tooglePropertyMaintenenceData['IssueDescription'];
-                                              $ticket_id = base64_encode($tooglePropertyMaintenenceData['TicketNum']);
-                                              
-                                            $newIssueDiscription = strlen($issueDiscription) > 50 ? substr($issueDiscription,0,50)."..." : $issueDiscription;
-                                          $MaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['TicketDate'].'</a></td><td class="Source"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['Issue'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$newIssueDiscription.'</a></td></tr>';
-                                          }
-                                          $MaintenenceTable_html.='</tbody></table>  </div>';
-                                          
-                                        ?>
-                                        
-                                        <!-- PROPERTY NAME MAINTENENCE HISTORY LINK -->
-                                        <p><span class="titleStyle"> <?= $ticketData['Property']; ?> Maintenance History:
-                                            </span><span><a data-toggle="collapse" class = "property_history" href="#collapse_maintenance_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
-                                        </p>
-                                        <div class="collapse linkTable" id="collapse_maintenance_history">
-                                           
-                                            <?php echo $MaintenenceTable_html; ?>
-                                          
-                                        </div>
-
-                                        <!-- SAME TICKETS HISTORY TABLE -->
-                                        <?php
-                                        $toogleIssueMaintenenceDatas = $db->query('SELECT TicketNum, Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
-                                        
-                                        $similarTicketsMaintenenceTable_html = 
-                                          '<div class="reserved_table">
-                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
-  
-                                          foreach($toogleIssueMaintenenceDatas as $toogleIssueMaintenenceData){
-                                              //echo "<pre>"; print_r($toogleTeamData);
-                                            $issueticket_id = base64_encode($toogleIssueMaintenenceData['TicketNum']);
-                                          $similarTicketsMaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Property'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Issue'].'</a></td><td class="issueDiscription"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['IssueDescription'].'</a></td></tr>';
-                                          }
-                                          $similarTicketsMaintenenceTable_html.='</tbody></table>  </div>';
-                                          
-                                        ?>
-                                        <!-- SIMILAR TICKETS FROM OTHER PROPERTIES -->
-
-                                        <p><span class="titleStyle"> Similar Tickets from Other Properties:
-                                            </span><span><a data-toggle="collapse" class = "similar_tickets_history" href="#collapse_similar_tickets_history" role="button" aria-expanded="false" aria-controls="collapseExample">Click here</a></span>
-                                        </p>
-                                        <div class="collapse linkTable" id="collapse_similar_tickets_history">
-                                           
-                                            <?php echo $similarTicketsMaintenenceTable_html; ?>
-                                          
-                                        </div>
-
-
-                                            <?php if($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] == NULL && $ticketData['ClosedDate'] != NULL ){?>
-                                            <div class="form-group pt-2 requestFeedbackBtn ">
-                                                    <button type="submit" teamMemberId=<?php echo $teamMemberNo;?> name="requestFeedbackBtn" id="requestFeedbackBtn" value="requestFeedbackBtn" class="btn btn-primary requestFeedback">Request Feedback</button>
-                                            </div>
-                                                <?php } elseif($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] != NULL && $ticketData['ClosedDate'] != NULL) { ?>
-                                                <div class='form-group pt-2'>
-                                                    <p><span class="titleStyle">Feedback Requested :</span>
-                                                    <span><?php echo date("m-d-Y h:i A", strtotime($ticketData['Feedbackrequested']) ); ?>
-                                                    </span>
-                                                </p>
-                                                </div>
-                                                <?php } ?>
-                                                <div class='form-group feedbackDateTime pt-2' style="display:none;">
-                                                    <p><span class="titleStyle">Feedback Requested :</span>
-                                                    <span class="showFeedbackData"></span>
-                                                </p>
-                                                </div>
-                                                <div class="assigned_feedback"></div>
                                             
-                                            <div id="assigned_membername"></div>
-                                            <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
-                                   </div>
-                            
-                                    <div class="card-footer"> 
-                                        <div class="row"> 
-                                            <div class="col-md-4">
-                                            </div>     
-                                            <div class="form-group  text-center col-md-4 ">
-                                                <?php   if($ticketData['ClosedDate'] == "" || $ticketData['ClosedDate'] == NULL ) { ?>         
-                                                <button type="button" name="CloseTicket" id="ticketClose"
-                                                    class="btn btn-primary closedticket mr-2">Close Ticket</button>
+                                            <div class="card col-md-12 m-auto p-0 emailQueue_table" style="display:none;">
+                                                <div class="card-header ">
+                                                    <div class="row">
+                                                        <div class="col-md-4">
+                                                        <button type="button" name="emailQueueBackBtn" id="emailQueueBackBtn"
+                                                        class="btn btn-primary text-left">Back</button>
+                                                        </div>
+                                                        <div class="col-md-4 ml-6">
+                                                        <strong>Emailqueue data table</strong>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                    
+                                                        </div>
+                                                
+                                                    
+                                                    </div>
+                                                
+                                                </div>
+                                                <div class="card-body  m-auto">
+                                                    <div class= "queue_table">
+                                                    <?php echo $emailQueueTable_html; ?>
+                                                    </div>
+                                                </div>
+                                                <div class="card-footer text-center"> 
+                                                
+                                                </div>
+                                            
+                                            </div>        
+                                            
                                             <?php } ?>
-                                                <button type="button" name="ClosePage" id="closePage"
-                                                    class="btn btn-primary closepage">Close Page</button>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            </div>  
-                                        
-                                    </div>
-                            
+
                         </div>
-                        <?php } ?>
-                        <div class="container ticketDetailPics">
-                            <div class="row">
-                                <?php if($ticketData['Pic1'] != "" ){?>
-                                <div class="card col-md-3 mt-2 p-0 ">
-                                    <div class="card-body text-center">
-                                        <img src="<?= $ticketData['Pic1']; ?>" alt="" width="200px">
-                                    </div>
-                                </div>
-                                <?php } if($ticketData['Pic2'] != "" ){ ?>
-                                <div class="card col-md-3 mt-2 p-0">
-                                    <div class="card-body text-center">
-                                        <img src="<?= $ticketData['Pic2']; ?>" alt="" width="200px">
-                                    </div>
-                                </div>
-                                <?php } if($ticketData['Pic3'] != "" ){ ?>
-                                <div class="card col-md-3 mt-2 p-0">
-                                    <div class="card-body text-center">
-                                        <img src="<?= $ticketData['Pic3']; ?>" alt="" width="200px">
-                                    </div>
-                                </div>
-                                <?php } if($ticketData['Pic4'] != "" ){ ?>
-                                <div class="card col-md-3 mt-2 p-0">
-                                    <div class="card-body text-center">
-                                        <img src="<?= $ticketData['Pic4']; ?>" alt="" width="200px">
-                                    </div>
-                                </div>
-                                <?php } ?>
-                            </div>
-                        </div>
-
-                                        <?php
-                                        if($teamAdminData['admin'] == 'Y'){
-                                        // GET TEAM DATA FOR TOOGLE TABLE
-                                        $toogleTeamDatas = $db->query('SELECT BodyText , ToEmail , TeamMemberId , Status , ScheduleDate , TImeDateSent , NotificationRead FROM EmailQueue WHERE TicketNum = ?' ,$ticketNumber)->fetchAll();
-
-                                       //EMAIL QUEUE TOOGLE TABLE 
-                                        $emailQueueTable_html = '<table class="table table-bordered table-striped emailqueue_table"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> BodyText</th><th>ToEmail</th><th>TeamMemberId</th><th>Status</th><th>ScheduleDate</th><th>  TImeDateSent</th><th>NotificationRead</th></tr></thead><tbody>';
-
-                                        foreach($toogleTeamDatas as $toogleTeamData){
-                                            //echo "<pre>"; print_r($toogleTeamData);
-
-                                        $emailQueueTable_html .= '<tr><td>'.$toogleTeamData['BodyText'].'</td><td>'.$toogleTeamData['ToEmail'].'</td><td>'.$toogleTeamData['TeamMemberId'].'</td><td>'.$toogleTeamData['Status'].'</td><td>'.$toogleTeamData['ScheduleDate'].'</td><td>'.$toogleTeamData['TImeDateSent'].'</td><td>'.$toogleTeamData['NotificationRead'].'</td></tr>';
-                                        }
-                                        $emailQueueTable_html.='</tbody></table>';
-                                        
-                                        ?>
-                                        
-                                        <div class="card col-md-12 m-auto p-0 emailQueue_table" style="display:none;">
-                                            <div class="card-header ">
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                    <button type="button" name="emailQueueBackBtn" id="emailQueueBackBtn"
-                                                    class="btn btn-primary text-left">Back</button>
-                                                    </div>
-                                                    <div class="col-md-4 ml-6">
-                                                    <strong>Emailqueue data table</strong>
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                   
-                                                    </div>
-                                               
-                                                 
-                                                </div>
-                                            
-                                            </div>
-                                            <div class="card-body  m-auto">
-                                                <div class= "queue_table">
-                                                <?php echo $emailQueueTable_html; ?>
-                                                </div>
-                                            </div>
-                                            <div class="card-footer text-center"> 
-                                            
-                                            </div>
-                                           
-                                        </div>        
-                                        
-                                        <?php } ?>
-
                     </div>
                 </div>
             </div>
@@ -969,11 +975,6 @@ $eta_custom_date = $eta_custom_time = '';
                     });
 
         });
-
-       
-       
-       
-
 
     });
     

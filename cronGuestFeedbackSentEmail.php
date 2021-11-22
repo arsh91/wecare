@@ -27,10 +27,11 @@ foreach($guestSendEmailData as $mailData){
                 $endDt = new DateTime ( $end );
                 $endDate = $endDt->format ( 'Y-m-d' );
                 $eventName = $icsEvent['SUMMARY'];
-                echo "<pre>"; print_r($TicketDate);
+                //echo "<pre>"; print_r($TicketDate);
+                print_r("here");
                 
                 if(strtotime($startDate) <= $TicketDate && strtotime($endDate) >= $TicketDate){
-                    print_r("jfhsdifh");
+                    echo "test";
                     $feedBackTicketNum = $mailData['TicketNum'];
                     $feedBackTeamMemberId = $mailData['ClosedBy'];
                     $feedBackIssue = $mailData['Issue'];
