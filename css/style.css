@@ -120,14 +120,36 @@ border: 1px solid #28a745 !important;
  .linkTable{
    max-width: 500px;
  }
-   @media only screen{
-      .issueDiscription {
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2; /* number of lines to show */
-                  line-clamp: 2; 
-          -webkit-box-orient: vertical;
-          line-height: 2.1em;
-    }
-  }
+ .queue_table {
+  max-height: 600px;
+  max-width: 1070px;
+  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  margin-bottom: 15px;
+}
+.emailqueue_table thead tr th {
+  border: 2px solid #f2f2f2;
+}
+
+.morecontent span {
+display:none;
+}
+.morelink {
+display:block;
+}
+
+.technotesDiv {
+  inline-size: 330px;
+  overflow-wrap: break-word;
+}
+a.maintenanceHistoryTable{
+  color: rgb(0 0 0 / 90%);
+}
+
+a.maintenanceHistoryTable:hover {
+  color: rgb(0 0 0 / 90%);
+  text-decoration: none;
+   
+  
+}

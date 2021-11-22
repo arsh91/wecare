@@ -19,46 +19,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <?php } ?>
 </head>
-<style>
 
-.queue_table {
-    max-height: 600px;
-    max-width: 1070px;
-    overflow: hidden;
-    overflow-y: scroll;
-    overflow-x: scroll;
-    margin-bottom: 15px;
-}
-.emailqueue_table thead tr th {
-    border: 2px solid #f2f2f2;
-}
-
-.morecontent span {
-  display:none;
-}
-.morelink {
-  display:block;
-}
-
-.technotesDiv {
-    inline-size: 330px;
-    overflow-wrap: break-word;
-}
-
-    /* /* @media only screen{
-    .issueDiscription {
-        text-overflow: ellipsis; /* will make [...] at the end */
-    /* width: 370px; change to your preferences */
-    /* white-space: nowrap; paragraph to one line */
-    /* overflow:hidden; older browsers */
-  /* } */
-/* } */  
-
-
-
-</style>
 <body>
     <?php 
+    
 $close_date = date("Y-m-d");
 $close_time = date("H:i:s");
 if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){
@@ -67,7 +31,7 @@ $teamMemberNo = base64_decode($_GET['teamMemberNo']);
 }
 else{
     $ticketNumber = $_POST['ticketNum'];
-$teamMemberNo = $_POST['teamMembersNo'];
+    $teamMemberNo = $_POST['teamMembersNo'];
 }
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
@@ -492,12 +456,12 @@ $eta_custom_date = $eta_custom_time = '';
                                             <?php }?>
                                         </div>
                                         <!-- TECH NOTES FIELD -->
-                                        <div class="technotesDiv"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
+                                        <div class="technotesDiv mb-3"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
                                         
                                         <!-- MAINTENENCE HISTORY TOOGLE TABLE  -->
                                         <?php
-                                         $tooglePropertyMaintenenceDatas = $db->query('SELECT TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
-
+                                         $tooglePropertyMaintenenceDatas = $db->query('SELECT TicketNum, TicketDate , Issue , IssueDescription FROM MaintenanceTicket WHERE Property = ? ORDER BY TicketDate DESC' ,$ticketData['Property'])->fetchAll();
+                                         
                                           $MaintenenceTable_html = 
                                           '<div class="form-group radio_filter">
                                                 <label for="maintenence-filter" class="col-form-label"><strong>Filter:</strong></label>
@@ -522,8 +486,11 @@ $eta_custom_date = $eta_custom_time = '';
   
                                           foreach($tooglePropertyMaintenenceDatas as $tooglePropertyMaintenenceData){
                                               //echo "<pre>"; print_r($toogleTeamData);
-  
-                                          $MaintenenceTable_html .= '<tr><td>'.$tooglePropertyMaintenenceData['TicketDate'].'</td><td class="Source">'.$tooglePropertyMaintenenceData['Issue'].'</td><td>'.$tooglePropertyMaintenenceData['IssueDescription'].'</td></tr>';
+                                              $issueDiscription = $tooglePropertyMaintenenceData['IssueDescription'];
+                                              $ticket_id = base64_encode($tooglePropertyMaintenenceData['TicketNum']);
+                                              
+                                            $newIssueDiscription = strlen($issueDiscription) > 50 ? substr($issueDiscription,0,50)."..." : $issueDiscription;
+                                          $MaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['TicketDate'].'</a></td><td class="Source"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['Issue'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$newIssueDiscription.'</a></td></tr>';
                                           }
                                           $MaintenenceTable_html.='</tbody></table>  </div>';
                                           
@@ -541,16 +508,16 @@ $eta_custom_date = $eta_custom_time = '';
 
                                         <!-- SAME TICKETS HISTORY TABLE -->
                                         <?php
-                                        $toogleIssueMaintenenceDatas = $db->query('SELECT Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
-
+                                        $toogleIssueMaintenenceDatas = $db->query('SELECT TicketNum, Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
+                                        
                                         $similarTicketsMaintenenceTable_html = 
                                           '<div class="reserved_table">
-                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
+                                          <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
   
                                           foreach($toogleIssueMaintenenceDatas as $toogleIssueMaintenenceData){
                                               //echo "<pre>"; print_r($toogleTeamData);
-  
-                                          $similarTicketsMaintenenceTable_html .= '<tr><td>'.$toogleIssueMaintenenceData['Property'].'</td><td class="Source">'.$toogleIssueMaintenenceData['Issue'].'</td><td class="issueDiscription">'.$toogleIssueMaintenenceData['IssueDescription'].'</td></tr>';
+                                            $issueticket_id = base64_encode($toogleIssueMaintenenceData['TicketNum']);
+                                          $similarTicketsMaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Property'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Issue'].'</a></td><td class="issueDiscription"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['IssueDescription'].'</a></td></tr>';
                                           }
                                           $similarTicketsMaintenenceTable_html.='</tbody></table>  </div>';
                                           
@@ -1002,6 +969,11 @@ $eta_custom_date = $eta_custom_time = '';
                     });
 
         });
+
+       
+       
+       
+
 
     });
     
