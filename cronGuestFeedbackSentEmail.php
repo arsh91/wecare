@@ -28,10 +28,10 @@ foreach($guestSendEmailData as $mailData){
                 $endDate = $endDt->format ( 'Y-m-d' );
                 $eventName = $icsEvent['SUMMARY'];
                 //echo "<pre>"; print_r($TicketDate);
-                print_r("here");
+               
                 
                 if(strtotime($startDate) <= $TicketDate && strtotime($endDate) >= $TicketDate){
-                    echo "test";
+                    
                     $feedBackTicketNum = $mailData['TicketNum'];
                     $feedBackTeamMemberId = $mailData['ClosedBy'];
                     $feedBackIssue = $mailData['Issue'];
@@ -44,22 +44,23 @@ foreach($guestSendEmailData as $mailData){
                     $ticket_id = base64_encode($feedBackTicketNum);
                     $team_memberId= base64_encode($feedBackTeamMemberId);
                     $feedbackLetterLink = "https://wecare.equisourceholdings.com/feedbackLetter.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId;
-                    print_r($feedbackLetterLink);
-                    $bodytext = "<p>Hi ".$feedBackFirstName." , Please click here to let us know how we did on Ticket Number ".$feedBackTicketNum.", ".$feedBackIssue.".".$feedbackLetterLink."</p>";
+                   print_r($feedbackLetterLink);
+                    $bodytext = "<p>Hi ".$feedBackFirstName." , Please click here to let us know how we did on Ticket Number ".$feedBackTicketNum.", ".$feedBackIssue.". ".$feedbackLetterLink."</p>";
                     print_r($bodytext);
+                  
                     
-                    // $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $ticketId, $teammemberid," ", "Pending",$schedule_datetime, "1", "request_feedBack_email");
+                     $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $feedBackTicketNum, $feedBackTeamMemberId," ", "Pending",$schedule_datetime, "1", "request_feedBack_email");
 
-                    // $updateFeedbackrequested = $db->query('UPDATE MaintenanceTicket SET Feedbackrequested =?  WHERE TicketNum=?', $schedule_datetime, $ticketId);
+                     $updateFeedbackrequested = $db->query('UPDATE MaintenanceTicket SET Feedbackrequested =?  WHERE TicketNum=?', $schedule_datetime, $feedBackTicketNum);
 
-                    // break;
+                     break;
                 }
                 
         }
        
 
 
-       // echo "<pre>"; print_r($guestSendEmailData); echo "</pre>"; 
+     
         
     
 }
