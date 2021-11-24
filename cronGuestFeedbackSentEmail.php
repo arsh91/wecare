@@ -5,7 +5,7 @@ include 'ics.php';
 
 
 
-$guestSendEmailData =$db->query('SELECT TicketDate, ical, TicketNum, ClosedBy, Issue, Phone, FirstName  FROM MaintenanceTicket AS MT LEFT JOIN Properties AS prop ON MT.property_Id = prop.PropertyID WHERE MT.ClosedDate IS NOT NULL AND MT.Feedbackrequested IS NULL LIMIT 0, 5')->fetchAll();
+$guestSendEmailData =$db->query('SELECT TicketDate, ical, TicketNum, ClosedBy, Issue, Phone, FirstName  FROM MaintenanceTicket AS MT LEFT JOIN Properties AS prop ON MT.property_Id = prop.PropertyID WHERE MT.ClosedDate IS NOT NULL AND MT.Feedbackrequested IS NULL')->fetchAll();
 // echo "<pre>"; print_r($guestSendEmailData); echo "</pre>"; die();
 
 foreach($guestSendEmailData as $mailData){

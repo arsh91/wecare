@@ -10,14 +10,14 @@
 
 <head>
 <title>Ticket Detail</title>
-<?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){  ?>
+
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="css/style.css" rel="stylesheet">
     <link href="css/jquery-ui-datepicker.css" rel="stylesheet">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <?php } ?>
+
 </head>
 
 <body>
@@ -25,14 +25,10 @@
     
 $close_date = date("Y-m-d");
 $close_time = date("H:i:s");
-if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){
+
 $ticketNumber = base64_decode($_GET['ticketNum']);
 $teamMemberNo = base64_decode($_GET['teamMemberNo']);
-}
-else{
-    $ticketNumber = $_POST['ticketNum'];
-    $teamMemberNo = $_POST['teamMembersNo'];
-}
+print_r($teamMemberNo);
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
 if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1"){
@@ -102,7 +98,7 @@ $eta_custom_date = $eta_custom_time = '';
                         </div>
                         <div class="form-group">
                             <label for="Hours-Billed" class="col-form-label"><strong>Hours Billed for Job:</strong></label>
-                            <input class="form-control"  type="number" id="hoursbilled" name="hoursbilled">
+                            <input class="form-control"  type="number" step="0.01"  id="hoursbilled" name="hoursbilled">
                         </div>
                         <div class="form-group">
                             <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
@@ -131,7 +127,7 @@ $eta_custom_date = $eta_custom_time = '';
                                 <input
                                 class="form-check-input" type="radio" value="not_certain"
                                 name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4">
-                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I’m not certain of the Guest’s satisfaction level
+                                <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I'm not certain of the Guest's satisfaction level
                                 </label>
                             </div>
                         </div>
@@ -153,7 +149,6 @@ $eta_custom_date = $eta_custom_time = '';
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card_wrapper">
-                <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
                             <div class="brand text-center mb-4">
                                 <a href="/"><img src="img/wecarelogo.png" alt="We Care" width="150px"></a>
                             </div>
@@ -185,7 +180,7 @@ $eta_custom_date = $eta_custom_time = '';
                                     </div>
                                 </div>
                                         <div class="card-body  m-auto cardDetails">
-                                            <?php } ?>
+
                                             <p><span class="titleStyle"> Property Name: </span><?= $ticketData['Property']; ?> </p>
                                             <p><span class="titleStyle"> Urgency: </span><?= $ticketData['Urgency']; ?> </p>
                                             <p><span class="titleStyle"> Issue: </span><?= $ticketData['Issue']; ?> </p>
@@ -285,8 +280,8 @@ $eta_custom_date = $eta_custom_time = '';
                                                 </span><?= $ticketData['ClosedTime']; ?> </p>
                                             <p><span class="titleStyle"> Ticket Closed By:
                                                 </span><?= $teamMemberData['Fname']." ". $teamMemberData['Lname']; ?> </p>
-                                            <p><span class="titleStyle"> Notes:
-                                                </span><?= $ticketData['Notes']; ?> </p>
+                                            <div class="technotesDiv mb-3"><span class="titleStyle"> Notes:
+                                                </span><?= $ticketData['Notes']; ?> </div>
                                             <?php } if($ticketData['ETATeamMemberID'] == 0) { ?>
                                             <div>
                                                 <p><span class="titleStyle">Assigned to:</span><span class="assignedTo">
@@ -459,7 +454,7 @@ $eta_custom_date = $eta_custom_time = '';
                                             </div>
                                             <!-- TECH NOTES FIELD -->
                                             <?php
-                                            if(isset($technotes["technotes"]) && $technotes["technotes"] != " "){
+                                            if(isset($technotes["technotes"]) && $technotes["technotes"] != ""){
                                                 ?>
                                             <div class="technotesDiv mb-3"><span class="titleStyle ">Tech Notes: </span><span class="more"><?= $technotes["technotes"]; ?> </span></div>
                                             <?php }?>
@@ -487,7 +482,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                 </div> 
                                             
                                                 <div class="reserved_table">
-                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody class="bodyHide">';
+                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>Issue Description</th></tr></thead><tbody class="bodyHide">';
     
                                             foreach($tooglePropertyMaintenenceDatas as $tooglePropertyMaintenenceData){
                                                 //echo "<pre>"; print_r($toogleTeamData);
@@ -495,7 +490,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                 $ticket_id = base64_encode($tooglePropertyMaintenenceData['TicketNum']);
                                                 
                                                 $newIssueDiscription = strlen($issueDiscription) > 50 ? substr($issueDiscription,0,50)."..." : $issueDiscription;
-                                            $MaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['TicketDate'].'</a></td><td class="Source"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['Issue'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$newIssueDiscription.'</a></td></tr>';
+                                            $MaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.date("m-d-Y", strtotime($tooglePropertyMaintenenceData['TicketDate']) ).'</a></td><td class="Source"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$tooglePropertyMaintenenceData['Issue'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $ticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$newIssueDiscription.'</a></td></tr>';
                                             }
                                             $MaintenenceTable_html.='</tbody></table>  </div>';
                                             
@@ -510,19 +505,18 @@ $eta_custom_date = $eta_custom_time = '';
                                                 <?php echo $MaintenenceTable_html; ?>
                                             
                                             </div>
-
-                                            <!-- SAME TICKETS HISTORY TABLE -->
-                                            <?php
-                                            $toogleIssueMaintenenceDatas = $db->query('SELECT TicketNum, Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
+                                              <!-- SAME TICKETS HISTORY TABLE -->
+                                              <?php
+                                            $toogleIssueMaintenenceDatas = $db->query('SELECT TicketNum, TicketDate, Property , Issue , IssueDescription FROM MaintenanceTicket WHERE Issue = ? ORDER BY Property DESC' ,$ticketData['Issue'])->fetchAll();
                                             
                                             $similarTicketsMaintenenceTable_html = 
                                             '<div class="reserved_table">
-                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th> Date</th><th>Issue</th><th>IssueDescription</th></tr></thead><tbody>';
+                                            <table class="table table-bordered table-striped"><thead style="position: sticky;top:0; background:#dee2e6;"><tr><th style="width:150px !important;">Property Name</th><th>Date</th><th>Issue Description</th></tr></thead><tbody>';
     
                                             foreach($toogleIssueMaintenenceDatas as $toogleIssueMaintenenceData){
                                                 //echo "<pre>"; print_r($toogleTeamData);
                                                 $issueticket_id = base64_encode($toogleIssueMaintenenceData['TicketNum']);
-                                            $similarTicketsMaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Property'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Issue'].'</a></td><td class="issueDiscription"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['IssueDescription'].'</a></td></tr>';
+                                            $similarTicketsMaintenenceTable_html .= '<tr><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['Property'].'</a></td><td><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.date("m-d-Y", strtotime($toogleIssueMaintenenceData['TicketDate']) ).'</a></td><td class="issueDiscription"><a class="maintenanceHistoryTable" href="ticket_detail.php?ticketNum=' . $issueticket_id .'&teamMemberNo='.base64_encode($teamMemberNo).'" target="_blank">'.$toogleIssueMaintenenceData['IssueDescription'].'</a></td></tr>';
                                             }
                                             $similarTicketsMaintenenceTable_html.='</tbody></table>  </div>';
                                             
@@ -537,7 +531,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                 <?php echo $similarTicketsMaintenenceTable_html; ?>
                                             
                                             </div>
-
+                                          <!-- </div> -->
 
                                                 <?php if($teamAdminData['admin'] == 'Y' && $ticketData['Feedbackrequested'] == NULL && $ticketData['ClosedDate'] != NULL ){?>
                                                 <div class="form-group pt-2 requestFeedbackBtn ">
@@ -559,7 +553,7 @@ $eta_custom_date = $eta_custom_time = '';
                                                     <div class="assigned_feedback"></div>
                                                 
                                                 <div id="assigned_membername"></div>
-                                                <?php if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
+
                                     </div>
                                 
                                         <div class="card-footer"> 
@@ -581,31 +575,31 @@ $eta_custom_date = $eta_custom_time = '';
                                         </div>
                                 
                             </div>
-                            <?php } ?>
+
                             <div class="container ticketDetailPics">
                                 <div class="row">
                                     <?php if($ticketData['Pic1'] != "" ){?>
                                     <div class="card col-md-3 mt-2 p-0 ">
                                         <div class="card-body text-center">
-                                            <img src="<?= $ticketData['Pic1']; ?>" alt="" width="200px">
+                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic1']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic2'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="<?= $ticketData['Pic2']; ?>" alt="" width="200px">
+                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic2']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic3'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="<?= $ticketData['Pic3']; ?>" alt="" width="200px">
+                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic3']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic4'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="<?= $ticketData['Pic4']; ?>" alt="" width="200px">
+                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic4']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } ?>
@@ -666,7 +660,7 @@ $eta_custom_date = $eta_custom_time = '';
             </div>
         </div>
     </section>
-    <?php  if(isset($_GET['ticketNum']) && isset($_GET['teamMemberNo']) ){ ?>
+
     <script src="//code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
@@ -676,7 +670,7 @@ $eta_custom_date = $eta_custom_time = '';
     <script src="js/moment.js"></script>
     <script src="js/jquery-ui-datepicker.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
-<?php } ?>
+
     <script type="text/javascript">
     $(document).ready(function() {
                       
@@ -686,6 +680,7 @@ $eta_custom_date = $eta_custom_time = '';
             var eta =$(this).attr("eta");
             var today = new Date();
             var Time = today.getHours();
+            // alert(Time);
             if(DisabledEtaTime <= Time && eta == "today" ){
                 $(this).attr('disabled', 'disabled');  
             }
@@ -763,6 +758,7 @@ $eta_custom_date = $eta_custom_time = '';
                 },
                 success: function(response) {
                     var response = JSON.parse(response);
+                    //console.log(response);
                     if (response.doorCode) {
                         $(".doorcode").html("<span class='titleStyle'>" + " Door code:" +
                             "</span>" + " " + response.doorCode);
@@ -875,10 +871,10 @@ $eta_custom_date = $eta_custom_time = '';
         });
 
         $('.requestFeedback').click(function() {
-            
+            // alert('test');
             var ticket_id = $('.ticket_id').text();
             var teamMemberId = $('.requestFeedback').attr('teamMemberId');
-            
+            //lert(teamMemberId);
 
             $.ajax({
                 type: "POST",
@@ -888,7 +884,7 @@ $eta_custom_date = $eta_custom_time = '';
                     'teamMemberId': teamMemberId
                      },
                      success: function(response) {
-                        
+                        //  console.log(response);
                         var response = JSON.parse(response);
                         if (response.Feedbackrequested) {
                         

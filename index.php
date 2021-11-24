@@ -56,14 +56,14 @@
                                             if(isset($_GET['inspector'])) {
                                         ?>
                                             <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="InspectionTicket" value="Y" id="authorize">
+                                                <input class="form-check-input" type="checkbox" name="InspectionTicket" value="Y" id="authorize" checked>
                                                 <label class="form-check-label" for="authorize">
                                                 Create Inspection Ticket</label><br><br>
  
                                             </div>   
+                                        <?php }else{?>
+                                            <input type=hidden name="InspectionTicket" value="N" >
                                         <?php }?>
-                                        
-                                        <input type=hidden name="InspectionTicket" value="N" >
                                             <label for="property_name">Property Name</label>
                                             <?php $properties = $db->query('SELECT * FROM Properties ORDER BY PropertyName ASC')->fetchAll(); ?>
                                             <select class="form-control form-select propertyselect" id="property"
