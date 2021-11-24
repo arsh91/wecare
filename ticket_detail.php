@@ -105,28 +105,28 @@ $eta_custom_date = $eta_custom_time = '';
                             <div class="form-check">
                                 <input
                                 class="form-check-input" type="radio" value="Guest_appeared_satisfied"
-                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio1">
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio1" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio1">The Guest appeared satisfied
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input
                                 class="form-check-input" type="radio" value="Guest_did_not_appear_satisfied_dissatisfied"
-                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio2">
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio2" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio2">The Guest did not appear either satisfied or dissatisfied
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input
                                 class="form-check-input" type="radio" value=" Guest_dissatisfied_with_resolution_other issues"
-                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio3">
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio3" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio3">The Guest was dissatisfied with this resolution and/or other issues
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input
                                 class="form-check-input" type="radio" value="not_certain"
-                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4">
+                                name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I'm not certain of the Guest's satisfaction level
                                 </label>
                             </div>
