@@ -6,7 +6,7 @@ include 'ics.php';
 
 
 $guestSendEmailData =$db->query('SELECT TicketDate, ical, TicketNum, ClosedBy, Issue, Phone, FirstName  FROM MaintenanceTicket AS MT LEFT JOIN Properties AS prop ON MT.property_Id = prop.PropertyID WHERE MT.ClosedDate IS NOT NULL AND MT.Feedbackrequested IS NULL')->fetchAll();
-// echo "<pre>"; print_r($guestSendEmailData); echo "</pre>"; die();
+// echo "<pre>"; print_r($guestSendEmailData); echo "</pre>"; 
 
 foreach($guestSendEmailData as $mailData){
 
@@ -27,10 +27,13 @@ foreach($guestSendEmailData as $mailData){
                 $endDt = new DateTime ( $end );
                 $endDate = $endDt->format ( 'Y-m-d' );
                 $eventName = $icsEvent['SUMMARY'];
-                //echo "<pre>"; print_r($TicketDate);
+                //echo "<pre>"; print_r($startDate);
+               // echo "<pre>"; print_r($endDate);
+                
                
                 
                 if(strtotime($startDate) <= $TicketDate && strtotime($endDate) >= $TicketDate){
+                    // echo "<pre>"; print_r($mailData); echo "</pre>"; 
                     
                     $feedBackTicketNum = $mailData['TicketNum'];
                     $feedBackTeamMemberId = $mailData['ClosedBy'];
@@ -44,16 +47,16 @@ foreach($guestSendEmailData as $mailData){
                     $ticket_id = base64_encode($feedBackTicketNum);
                     $team_memberId= base64_encode($feedBackTeamMemberId);
                     $feedbackLetterLink = "https://wecare.equisourceholdings.com/feedbackLetter.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId;
-                   print_r($feedbackLetterLink);
+                   //print_r($feedbackLetterLink);
                     $bodytext = "<p>Hi ".$feedBackFirstName." , Please click here to let us know how we did on Ticket Number ".$feedBackTicketNum.", ".$feedBackIssue.". ".$feedbackLetterLink."</p>";
-                    print_r($bodytext);
+                    //print_r($bodytext);
                   
                     
-                     $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $feedBackTicketNum, $feedBackTeamMemberId," ", "Pending",$schedule_datetime, "1", "request_feedBack_email");
+                      $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $feedBackTicketNum, $feedBackTeamMemberId," ", "Pending",$schedule_datetime, "1", "request_feedBack_email");
 
-                     $updateFeedbackrequested = $db->query('UPDATE MaintenanceTicket SET Feedbackrequested =?  WHERE TicketNum=?', $schedule_datetime, $feedBackTicketNum);
+                      $updateFeedbackrequested = $db->query('UPDATE MaintenanceTicket SET Feedbackrequested =?  WHERE TicketNum=?', $schedule_datetime, $feedBackTicketNum);
 
-                     break;
+                     //break;
                 }
                 
         }

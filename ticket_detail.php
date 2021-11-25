@@ -581,25 +581,25 @@ $eta_custom_date = $eta_custom_time = '';
                                     <?php if($ticketData['Pic1'] != "" ){?>
                                     <div class="card col-md-3 mt-2 p-0 ">
                                         <div class="card-body text-center">
-                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic1']; ?>" alt="" width="200px">
+                                            <img src="<?= $ticketData['Pic1']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic2'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic2']; ?>" alt="" width="200px">
+                                            <img src="<?= $ticketData['Pic2']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic3'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic3']; ?>" alt="" width="200px">
+                                            <img src="<?= $ticketData['Pic3']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } if($ticketData['Pic4'] != "" ){ ?>
                                     <div class="card col-md-3 mt-2 p-0">
                                         <div class="card-body text-center">
-                                            <img src="https://wecare.equisourceholdings.com/<?= $ticketData['Pic4']; ?>" alt="" width="200px">
+                                            <img src="<?= $ticketData['Pic4']; ?>" alt="" width="200px">
                                         </div>
                                     </div>
                                     <?php } ?>
