@@ -19,7 +19,7 @@ function sendEmail($subject, $bodytext, $toEmail, $Ticket_Num, $TeamMember_Id,  
 
 }
 
-$maintainenceData =$db->query('SELECT * FROM MaintenanceTicket WHERE ClosedBy IS NULL AND  ETA_radio!= "" AND ReminderEmail!= "1" AND(TIMESTAMPDIFF(HOUR, concat(ETADate," ",ETATime), now()) BETWEEN 8 AND 168)')->fetchAll();
+$maintainenceData =$db->query('SELECT * FROM MaintenanceTicket WHERE ClosedBy IS NULL AND  ETA_radio!= "" AND ReminderEmail!= "1" AND(TIMESTAMPDIFF(HOUR, concat(ETADate," ",ETATime), now()) BETWEEN 4 AND 168)')->fetchAll();
 // echo "<pre>"; print_r($maintainenceData); echo "</pre>"; die;
 
 foreach($maintainenceData as $reminder_data){

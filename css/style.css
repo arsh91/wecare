@@ -114,4 +114,42 @@ border: 1px solid #28a745 !important;
   font-size: 16px;
   text-align: center;
 }
- 
+/* .radio_filter{
+  margin-left: 330px;
+} */
+ .linkTable{
+   max-width: 400px;
+ }
+ .queue_table {
+  max-height: 600px;
+  max-width: 1070px;
+  overflow: hidden;
+  overflow-y: scroll;
+  overflow-x: scroll;
+  margin-bottom: 15px;
+}
+.emailqueue_table thead tr th {
+  border: 2px solid #f2f2f2;
+}
+
+.morecontent span {
+display:none;
+}
+.morelink {
+display:block;
+}
+
+.technotesDiv {
+  inline-size: 330px;
+  overflow-wrap: break-word;
+}
+a.maintenanceHistoryTable{
+  color: rgb(0 0 0 / 90%);
+}
+
+a.maintenanceHistoryTable:hover {
+  color: rgb(0 0 0 / 90%);
+  text-decoration: none;
+   
+  
+}
