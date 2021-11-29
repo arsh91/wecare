@@ -10,12 +10,13 @@ use PHPMailer\PHPMailer\Exception;
 
 $sendemaildata =$db->query('SELECT * FROM EmailQueue LEFT JOIN MaintenanceTicket On EmailQueue.TicketNum = MaintenanceTicket.TicketNum WHERE EmailQueue.Status= "Pending" AND EmailQueue.ScheduleDate<= now()')->fetchAll();
 // echo "<pre>"; print_r($sendemaildata); echo "</pre>"; 
+
 $currentdatetime=date('Y-m-d H:i:s');
 foreach($sendemaildata as $mail_data){
-    
+        
         $sendEmail = true;
         $status = '';
-        if($mail_data['Type'] == 'request_feedBack_email'){
+        if(strpos(strtolower($mail_data['Type']), 'feedback') > -1){
             $sendEmail = true;
            
         }else if($mail_data["ClosedBy"] >= 1){

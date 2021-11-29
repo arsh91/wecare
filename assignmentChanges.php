@@ -1,4 +1,7 @@
 <?php
+ ini_set('display_errors', 1);
+ ini_set('display_startup_errors', 1);
+ error_reporting(E_ALL);
 	include 'db_connection.php';
 ?>
 <!DOCTYPE html>
@@ -20,10 +23,36 @@ th:first-child, td:first-child
         </style>
 </head>
 <?php
- 
-$assignmentsData = $db->query('SELECT DISTINCT PropertyID, PropertyName FROM MaintenanceAssignements')->fetchAll(); 
-// echo "<pre>"; print_r($PropertyName); echo "</pre>"; 
+ //FECTH DISTINCT PROPERTY DATA FROM MAINTENANCE ASSIGNMENTS
+$assignmentsData = $db->query('SELECT DISTINCT  PropertyID, PropertyName FROM MaintenanceAssignements')->fetchAll(); 
+// echo "<pre>"; print_r($assignmentsData); echo "</pre>"; die;
+
+//FECTH DISTINCT CATEGORY DATA FROM MAINTENANCE ASSIGNMENTS
 $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM MaintenanceAssignements')->fetchAll(); 
+// echo "<pre>"; print_r($categoriesData); echo "</pre>"; 
+
+//FECTH CONTACT,WAIT,TECNOTES DATA FROM MAINTENANCE ASSIGNMENTS
+$MaintenanceAssignements = $db->query('SELECT * FROM MaintenanceAssignements WHERE PropertyName ="Aqua"')->fetchAll();
+// echo "<pre>"; print_r($MaintenanceAssignements); echo "</pre>"; 
+
+$success = 0;
+if(isset($_POST['submit'])){
+   
+// echo "<pre>"; print_r($_POST); echo "</pre>";
+    foreach($_POST['property'] as $prop){
+        // echo "<pre>"; print_r($prop); echo "</pre>";
+
+        foreach($_POST['category'] as $cat){
+            $cat = (!empty($cat)) ? $cat : "NULL"; 
+        // echo "<pre>"; print_r($cat); echo "</pre>";
+        $updateMaintenanceAssignements = $db->query('UPDATE MaintenanceAssignements SET Contact1 =?, Wait1 =?, Contact2 =?, Wait2 =?, Contact3 =?, Wait3 =?, Contact4 =?, Wait4 =?, Contact5 =?, Wait5 =?, Contact6 =?, Wait6 =?, Contact7 =?, Wait7 =?, Contact8 =?, Wait8 =?, Contact9 =?, Wait9 =?, Contact10 =?, Wait10 =?, technotes =? WHERE PropertyID=? AND CategoryID=?', $cat['contact1'], $cat['wait1'], $cat['contact2'], $cat['wait2'], $cat['contact3'], $cat['wait3'], $cat['contact4'], $cat['wait4'], $cat['contact5'], $cat['wait5'], $cat['contact6'], $cat['wait6'], $cat['contact7'], $cat['wait7'], $cat['contact8'], $cat['wait8'], $cat['contact9'], $cat['wait9'], $cat['contact10'], $cat['wait10'], $cat['technotes'], $prop, $cat['id']);
+            
+        $success = 1;
+        } 
+
+    }
+    
+}
 
 ?>
 <body>
@@ -35,8 +64,8 @@ $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM Maintena
                     <div class="brand text-center mb-4">
                         <a href="/"><img src="img/wecarelogo.png" alt="We Care" width="150px"></a>
                     </div>
-                    <form method="POST" name="assigmnetsChanges" action="" class="needs-validation"
-                        id="assigmnetsChanges" enctype="multipart/form-data" novalidate>
+                    <form method="POST" name="assigmnetsChanges" action="" 
+                        id="assigmnetsChanges" enctype="multipart/form-data">
                         <div class="card col-md-12 m-auto p-0" style="width: 1350px;">
                             <div class="card-header">
                                 
@@ -51,11 +80,13 @@ $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM Maintena
                                         <div class="row mt-3 mb-3">
                                                 <?php foreach($assignmentsData as $key=> $assignmentData){ ?>
                                                 <div class="form-check">
-                                                    <input class="form-check-input" type="checkbox" value="<?php
+                                                    <input class="form-check-input" name="property[<?php
+                                                    echo $assignmentData['PropertyID']; ?>]" type="checkbox" value="<?php
                                                     echo $assignmentData['PropertyID'];?>" id="authorize"
-                                                        required>
+                                                        >
                                                     <label class="form-check-label me-2" for="authorize"><?php
-                                                    echo $assignmentData['PropertyName']; ?><label><br>                                        
+                                                    echo $assignmentData['PropertyName']; ?><?php
+                                                    echo $assignmentData['PropertyID'];?><label><br>                                        
                                                 </div>
                                                 <?php } ?>                                           
                                         </div>
@@ -82,40 +113,55 @@ $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM Maintena
                                                 <th>Contact9</th>
                                                 <th>Wait9</th>
                                                 <th>Contact10</th>
-                                                <th>Wait10</th>                                               
+                                                <th>Wait10</th> 
+                                                <th>TechaNotes</th>                                               
+
                                             </tr>
                                             <tbody>
                                           
-                                            <?php foreach($categoriesData as  $categoryData) { ?>
+                                            <?php foreach($categoriesData as  $key =>$categoryData) {
+                                              
+                                                    if (strpos($categoryData['Category'], "------")  === false) {
+                                                       
+                                            ?>
                                                 <tr>
                                                   
-                                                    <td><?php  echo $categoryData['Category']; ?>  </td>
-                                               
-                                                    <td> <input class="inputBox" type="number" id="contact1" name="contact1"></td>
-                                                    <td><input class="inputBox" type="number" id="wait1" name="wait1"></td> 
-                                                    <td><input class="inputBox" type="number" id="contact2" name="contact2"></td>
-                                                    <td><input class="inputBox" type="number" id="wait2" name="wait2"></td>
-                                                    <td><input class="inputBox" type="number" id="contact3" name="contact3"></td>
-                                                    <td><input class="inputBox" type="number" id="wait3" name="wait3"></td>
-                                                    <td><input class="inputBox" type="number" id="contact4" name="contact4"></td>
-                                                    <td><input class="inputBox" type="number" id="wait4" name="wait4"></td>
-                                                    <td><input class="inputBox" type="number" id="contact5" name="contact5"></td>
-                                                    <td><input class="inputBox" type="number" id="wait5" name="wait5"></td>
-                                                    <td><input class="inputBox" type="number" id="contact6" name="contact6"></td>
-                                                    <td><input class="inputBox" type="number" id="wait6" name="wait6"></td>
-                                                    <td><input class="inputBox" type="number" id="contact7" name="contact7"></td>
-                                                    <td><input class="inputBox" type="number" id="wait7" name="wait7"></td>
-                                                    <td><input class="inputBox" type="number" id="contact8" name="contact8"></td>
-                                                    <td><input class="inputBox" type="number" id="wait8" name="wait8"></td>
-                                                    <td><input class="inputBox" type="number" id="contact9" name="contact9"></td>
-                                                    <td><input class="inputBox" type="number" id="wait9" name="wait9"></td>
-                                                    <td><input class="inputBox" type="number" id="contact10" name="contact10"></td>
-                                                    <td><input class="inputBox" type="number" id="wait10" name="wait10"></td>
+                                                    <td><?php  echo $categoryData['Category']; ?> <?php  echo $categoryData['CategoryID'];
+                                                    ?> 
+                                                    <input type="hidden" name="category[<?php echo $categoryData['CategoryID']; ?>][id]" value="<?php echo $categoryData['CategoryID']; ?>">
+                                                </td>
+                                             
+                                                    <td> <input class="inputBox"  type="number" id="contact1" name="category[<?php echo $categoryData['CategoryID']; ?>][contact1]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait1" name="category[<?php echo $categoryData['CategoryID']; ?>][wait1]"></td> 
+                                                    <td><input class="inputBox" type="number" id="contact2" name="category[<?php echo $categoryData['CategoryID']; ?>][contact2]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait2" name="category[<?php echo $categoryData['CategoryID']; ?>][wait2]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact3" name="category[<?php echo $categoryData['CategoryID']; ?>][contact3]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait3" name="category[<?php echo $categoryData['CategoryID']; ?>][wait3]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact4" name="category[<?php echo $categoryData['CategoryID']; ?>][contact4]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait4" name="category[<?php echo $categoryData['CategoryID']; ?>][wait4]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact5" name="category[<?php echo $categoryData['CategoryID']; ?>][contact5]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait5" name="category[<?php echo $categoryData['CategoryID']; ?>][wait5]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact6" name="category[<?php echo $categoryData['CategoryID']; ?>][contact6]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait6" name="category[<?php echo $categoryData['CategoryID']; ?>][wait6]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact7" name="category[<?php echo $categoryData['CategoryID']; ?>][contact7]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait7" name="category[<?php echo $categoryData['CategoryID']; ?>][wait7]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact8" name="category[<?php echo $categoryData['CategoryID']; ?>][contact8]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait8" name="category[<?php echo $categoryData['CategoryID']; ?>][wait8]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact9" name="category[<?php echo $categoryData['CategoryID']; ?>][contact9]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait9" name="category[<?php echo $categoryData['CategoryID']; ?>][wait9]"></td>
+                                                    <td><input class="inputBox" type="number" id="contact10" name="category[<?php echo $categoryData['CategoryID']; ?>][contact10]"></td>
+                                                    <td><input class="inputBox" type="number" id="wait10" name="category[<?php echo $categoryData['CategoryID']; ?>][wait10]"></td>
+                                                    <td><input class="inputtechNotes" type="text" id="techNotes" name="category[<?php echo $categoryData['CategoryID']; ?>][technotes]"></td>
 
-
-
+                                                        
                                                 </tr>
-                                            <?php } ?>
+                                                <?php
+                                               
+                                                    }
+                                                     
+                                                 }
+                                                
+                                                 ?>
                                             
                                             </tbody>
                                         </table>
@@ -124,7 +170,16 @@ $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM Maintena
                             </div>
 
                             <div class="card-footer text-center">
-                               
+                            <div class="form-group">
+                                <?php if($success){
+                                ?>
+                                <div class="success_box">
+                                    <div class="alert alert-success mt-3 eta_success_msg" role="alert">MaintenanceAssignements updated successfully!</div>
+                                </div>
+                                <?php } ?>
+                                <button type="submit" name="submit"
+                                    class="btn btn-primary">Submit</button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -139,5 +194,13 @@ $categoriesData = $db->query('SELECT DISTINCT CategoryID, Category FROM Maintena
     </script>
     <script src="js/custom.js"></script>
 </body>
-
+<script type="text/javascript">
+$(document).ready(function() {
+    
+// Append the Alert Box 
+setTimeout(() => {
+        $('.success_box').fadeOut('slow');
+    }, 2000);
+});
+</script>
 </html>

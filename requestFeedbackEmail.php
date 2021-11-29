@@ -25,7 +25,7 @@ if(isset($_POST['TicketNum'])  && isset($_POST['teamMemberId']) ){
     // print_r($feedbackLetterLink);
     $bodytext = "<p>Hi ".$feedBackFirstName." , Please click here to let us know how we did on Ticket Number ".$ticketId.", ".$feedBackIssue.".".$feedbackLetterLink."</p>";
 
-    $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $ticketId, $teammemberid," ", "Pending",$schedule_datetime, "1", "request_feedBack_email");
+    $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails, Type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',$from_email," ", $bodytext, $phoneEmail, $ticketId, $teammemberid," ", "Pending",$schedule_datetime, "1", "request_feedback_email");
 
     $updateFeedbackrequested = $db->query('UPDATE MaintenanceTicket SET Feedbackrequested =?  WHERE TicketNum=?', $schedule_datetime, $ticketId);
     $selectfeedbackData = $db->query('SELECT Feedbackrequested FROM MaintenanceTicket WHERE TicketNum = ?' , $ticketId)->fetchArray();
