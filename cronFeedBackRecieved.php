@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 // MAIL FUNCION FOR ALL EMAILS
-function sendEmail($subject, $bodytext, $toEmail, $Ticket_Num, $TeamMember_Id,  $status="Pending", $schedule_datetime, $Type="feedback_reminder_email"){
+function sendEmail($subject, $bodytext, $toEmail, $Ticket_Num, $TeamMember_Id,  $status="Pending", $schedule_datetime, $Type="feedback_recieved_email"){
     global $db;
   
     $from_email='toddknight@equisourceholdings.com';

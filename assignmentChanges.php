@@ -36,9 +36,10 @@ $MaintenanceAssignements = $db->query('SELECT * FROM MaintenanceAssignements WHE
 // echo "<pre>"; print_r($MaintenanceAssignements); echo "</pre>"; 
 
 $success = 0;
+
 if(isset($_POST['submit'])){
-   
-// echo "<pre>"; print_r($_POST); echo "</pre>";
+   print_r('test');
+echo "<pre>"; print_r($_POST); echo "</pre>";
     foreach($_POST['property'] as $prop){
         // echo "<pre>"; print_r($prop); echo "</pre>";
 
@@ -54,6 +55,18 @@ if(isset($_POST['submit'])){
     
 }
 
+
+function getRealPOST() {
+    $pairs = explode("&", file_get_contents("php://input"));
+    $vars = array();
+    foreach ($pairs as $pair) {
+        $nv = explode("=", $pair);
+        $name = urldecode($nv[0]);
+        $value = urldecode($nv[1]);
+        $vars[$name] = $value;
+    }
+    return $vars;
+}
 ?>
 <body>
    
@@ -170,15 +183,15 @@ if(isset($_POST['submit'])){
                             </div>
 
                             <div class="card-footer text-center">
-                            <div class="form-group">
-                                <?php if($success){
-                                ?>
-                                <div class="success_box">
-                                    <div class="alert alert-success mt-3 eta_success_msg" role="alert">MaintenanceAssignements updated successfully!</div>
-                                </div>
-                                <?php } ?>
-                                <button type="submit" name="submit"
-                                    class="btn btn-primary">Submit</button>
+                                <div class="form-group">
+                                    <?php if($success){
+                                    ?>
+                                    <div class="success_box">
+                                        <div class="alert alert-success mt-3 eta_success_msg" role="alert">MaintenanceAssignements updated successfully!</div>
+                                    </div>
+                                    <?php } ?>
+                                    <button type="submit" name="submit"
+                                        class="btn btn-primary">Submit</button>
                                 </div>
                             </div>
                         </div>
@@ -192,7 +205,7 @@ if(isset($_POST['submit'])){
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous">
     </script>
-    <script src="js/custom.js"></script>
+    <!-- <script src="js/custom.js"></script> -->
 </body>
 <script type="text/javascript">
 $(document).ready(function() {
