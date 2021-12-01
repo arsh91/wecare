@@ -28,7 +28,7 @@ $close_time = date("H:i:s");
 
 $ticketNumber = base64_decode($_GET['ticketNum']);
 $teamMemberNo = base64_decode($_GET['teamMemberNo']);
-print_r($teamMemberNo);
+// print_r($teamMemberNo);
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
 if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1"){
@@ -79,7 +79,7 @@ $eta_custom_date = $eta_custom_time = '';
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="POST" action="" id="notesform">
+                <form method="POST" action="" id="notesform" class="needs-validation golfcartForm" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title" id="submitModalLabel">NOTES</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -98,7 +98,7 @@ $eta_custom_date = $eta_custom_time = '';
                         </div>
                         <div class="form-group">
                             <label for="Hours-Billed" class="col-form-label"><strong>Hours Billed for Job:</strong></label>
-                            <input class="form-control"  type="number" step="0.01"  id="hoursbilled" name="hoursbilled">
+                            <input class="form-control"  type="number" step="0.01"  id="hoursbilled" name="hoursbilled" required>
                         </div>
                         <div class="form-group">
                             <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
@@ -129,6 +129,9 @@ $eta_custom_date = $eta_custom_time = '';
                                 name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I'm not certain of the Guest's satisfaction level
                                 </label>
+                                <div class="invalid-feedback lostErrorMsg mt-3">
+                                     Please correct the errors above that are highlighted in red
+                                </div>
                             </div>
                         </div>
 
