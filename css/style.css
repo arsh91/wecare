@@ -153,20 +153,3 @@ a.maintenanceHistoryTable:hover {
    
   
 }
-.form-check-label {
-  margin-right: 25px;
-}
-
-.assignment_table_div{
-  max-height: 100%;
-  max-width: 100%;
-  overflow: hidden;
-  overflow-x: scroll;
-  margin-bottom: 15px;
-}
-.inputBox{
-  width: 50px;
-}
-.inputtechNotes{
-  height: 50px;
-}

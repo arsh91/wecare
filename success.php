@@ -148,9 +148,8 @@ if(isset($_POST['submit'])){
                 $team_memberId= base64_encode($Category_data['Contact'.$i]);
 
                 $link = "https://wecare.equisourceholdings.com/ticket_detail.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId;
-                print_r($link);
+
                 $phoneLink = "https://wecare.equisourceholdings.com/ticket_detail.php?ticketNum=".$ticket_id."&teamMemberNo=".$team_memberId."&phone=1";
-                print_r($phoneLink);
 
 
                 
@@ -210,17 +209,17 @@ if(isset($_POST['submit'])){
             // $sendemailflag = true;
         $UserPhoneEmail = "1".$phone."@textmagic.com"; 
         if($satisfied_radio == "Immediate") {
-            $bodytext = "<p>Thank you for contacting us ".$firstname.".</p><p>We have received your message regarding the ".$issue. " issue at ".$property. ".</p> <p> We care about your experience.</p> <p>A member of our team will be contacting you within 60 minutes to assist you.</p> <p>Thank you for your patience and understanding.</p> <p> Todd </p>";
+            $bodytext = "<p>Thank you for contacting us ".$firstname.".</p><p>We have received your message regarding the ".$issue. " issue at ".$property. ".</p> <p> We care about your experience.</p> <p>A member of our team will be contacting you within 60 minutes to assist you.</p> <p>Please do not text back to this text message as this is an outgoing text number only. Thank you for your patience and understanding.</p> <p> Todd </p>";
         }
             else if($satisfied_radio == "Today" || $satisfied_radio == "Tomorrow") 
             {     
                 // $sendemailflag = false;
-            $bodytext = "<p>Thank you for contacting us ".$firstname.".</p><p>We have received your message regarding the ".$issue. " issue at ".$property. ".</p> <p> We care about your experience.</p> <p>A member of our team will be contacting you within 2 hours to assist you.</p> <p> Thank you for your patience and understanding.</p> <p> Todd </p>";
+            $bodytext = "<p>Thank you for contacting us ".$firstname.".</p><p>We have received your message regarding the ".$issue. " issue at ".$property. ".</p> <p> We care about your experience.</p> <p>A member of our team will be contacting you within 2 hours to assist you.</p> <p> Please do not text back to this text message as this is an outgoing text number only.  Thank you for your patience and understanding.</p> <p> Todd </p>";
         
             }
         else if($satisfied_radio == "Turn") {
             // $sendemailflag = false;
-            $bodytext = "<p>We have received your message ".$firstname.".</p><p>  We greatly appreciate you taking the time to let us know about issues that need to be addressed at ".$property. " after your checkout.</p> <p>Your feedback has been very valuable.</p><p> Please enjoy your stay! </p> <p> Todd </p>";
+            $bodytext = "<p>We have received your message ".$firstname.".</p><p>  We greatly appreciate you taking the time to let us know about issues that need to be addressed at ".$property. " after your checkout.</p> <p>Your feedback has been very valuable. Please do not text back to this text message as this is an outgoing text number only.</p><p> Please enjoy your stay! </p> <p> Todd </p>";
         }
 
         // if($sendemailflag){

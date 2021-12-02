@@ -28,11 +28,11 @@ $close_time = date("H:i:s");
 
 $ticketNumber = base64_decode($_GET['ticketNum']);
 $teamMemberNo = base64_decode($_GET['teamMemberNo']);
-// print_r($teamMemberNo);
+//print_r($teamMemberNo);
 
 // UPDATE THE FIELDS AFTER TICKET CLOSED
-if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1"){
-    
+if(isset($_POST['closeinput']) && $_POST['closeinput'] == "1" ){
+    // echo "<pre>"; print_r($_POST); die;
     $notes = $_POST['notes'];
     $hoursbilled = $_POST['hoursbilled'];
     $GuestSatisfactionLevel = $_POST['Guest_Satisfaction_Level_radio'];
@@ -98,7 +98,7 @@ $eta_custom_date = $eta_custom_time = '';
                         </div>
                         <div class="form-group">
                             <label for="Hours-Billed" class="col-form-label"><strong>Hours Billed for Job:</strong></label>
-                            <input class="form-control"  type="number" step="0.01"  id="hoursbilled" name="hoursbilled" required>
+                            <input class="form-control"  type="number"  step="0.01"  id="hoursbilled" name="hoursbilled" required>
                         </div>
                         <div class="form-group">
                             <label for="Guest-Satisfaction-Level" class="col-form-label"><strong>Guest Satisfaction Level:</strong></label>
@@ -118,7 +118,7 @@ $eta_custom_date = $eta_custom_time = '';
                             </div>
                             <div class="form-check">
                                 <input
-                                class="form-check-input" type="radio" value=" Guest_dissatisfied_with_resolution_other issues"
+                                class="form-check-input" type="radio" value=" Guest_dissatisfied_with_resolution_other_issues"
                                 name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio3" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio3">The Guest was dissatisfied with this resolution and/or other issues
                                 </label>
@@ -974,7 +974,7 @@ $eta_custom_date = $eta_custom_time = '';
                     });
 
         });
-
+    
     });
     
     $('.closepage').click(function() {      

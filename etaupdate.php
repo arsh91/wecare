@@ -90,7 +90,7 @@ if(isset($_POST['TicketNum']) && isset($_POST['eta_radio']) && isset($_POST['tea
                 $from_email='toddknight@equisourceholdings.com';
                 $phoneEmail = "1".$ETA['Phone']."@textmagic.com";
                 $schedule_datetime = date('Y-m-d H:i:s');
-                $bodytext = "<p>Hi ".$ETA['FirstName']." , Our team member, ".$assignedTeamMemberName." has responded to your request for assistance for Ticket Number ".$ticketId.", ".$maintenancecategory.".".$teamMemberName['Fname']." has stated that he expects to resolve this issue by ".date("m-d-Y", strtotime($ETA['ETADate']) )." at ".date("h:i A", strtotime($ETA['ETATime']) )." .</p>";
+                $bodytext = "<p>Hi ".$ETA['FirstName']." , Our team member, ".$assignedTeamMemberName." has responded to your request for assistance for Ticket Number ".$ticketId.", ".$maintenancecategory.".".$teamMemberName['Fname']." has stated that he expects to resolve this issue by ".date("m-d-Y", strtotime($ETA['ETADate']) )." at ".date("h:i A", strtotime($ETA['ETATime']) )." Please do not text back to this text message as this is an outgoing text number only. .</p>";
 
                 $emailData = $db->query('INSERT into EmailQueue (FromEmail, Subject,  BodyText, ToEmail, TicketNum, TeamMemberID, Files, Status, ScheduleDate, noFlagEmails) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',$from_email," ", $bodytext, $phoneEmail, $ticketId, $teammemberid," ", "Pending",$schedule_datetime, "1");
 
