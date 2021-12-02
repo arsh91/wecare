@@ -104,7 +104,7 @@ $("#remove_btn4").click(function (e) {
                 else if (issueVal.includes('-----')) {
                     $('.error-message').html('Please select a valid issue').show();
                     $('#basic_issue').addClass('cat_error');
-                    $('.lostErrorMsg').show();
+                    // $('.lostErrorMsg').show();
 					event.preventDefault()
                     event.stopPropagation()
                 }
@@ -146,6 +146,15 @@ $("#basic_issue").change(function () {
 
 //Close Ticket
 $('#ticketClose').click(function () {
+
+    $('textarea#notes').val('');
+    $('#hoursbilled').val('');
+    $('input[name="Guest_Satisfaction_Level_radio"]').prop('checked', false);
+    $('.closeTicketForm').removeClass('was-validated');
+    $('.lostErrorMsg').hide();
+
+ 
+    
 
     if (confirm('If the Guest is satisfied and this ticket is complete, click OK to close this ticket. \r\n If the ticket is incomplete, click cancel to leave the ticket open.')) {
         $('#submitModal').modal("show");

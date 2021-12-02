@@ -79,7 +79,7 @@ $eta_custom_date = $eta_custom_time = '';
         aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form method="POST" action="" id="notesform" class="needs-validation golfcartForm" novalidate>
+                <form method="POST" action="" id="notesform" class="closeTicketForm needs-validation" novalidate>
                     <div class="modal-header">
                         <h5 class="modal-title" id="submitModalLabel">NOTES</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -129,7 +129,7 @@ $eta_custom_date = $eta_custom_time = '';
                                 name="Guest_Satisfaction_Level_radio" id="Guest_Satisfaction_Level_radio4" required>
                                 <label class="form-check-label" for="Guest_Satisfaction_Level_radio4">I'm not certain of the Guest's satisfaction level
                                 </label>
-                                <div class="invalid-feedback lostErrorMsg mt-3">
+                                <div class="invalid-feedback erroremsg lostErrorMsg mt-3">
                                      Please correct the errors above that are highlighted in red
                                 </div>
                             </div>
