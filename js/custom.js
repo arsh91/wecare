@@ -145,9 +145,10 @@ $("#basic_issue").change(function () {
 });
 
 //Close Ticket
-$('#ticketClose').click(function () {
+$('.closedticket').click(function () {
 
     $('textarea#notes').val('');
+    $('.closedByAdmin').val('');
     $('#hoursbilled').val('');
     $('input[name="Guest_Satisfaction_Level_radio"]').prop('checked', false);
     $('.closeTicketForm').removeClass('was-validated');
@@ -164,3 +165,10 @@ $('#ticketClose').click(function () {
     }
 
 })
+
+$('#CloseTicket').click(function () {
+    $('.closedByAdmin').val('N');
+});
+$('#AdminCloseTicket').click(function () {
+    $('.closedByAdmin').val('Y');
+});

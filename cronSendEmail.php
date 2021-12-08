@@ -16,7 +16,7 @@ foreach($sendemaildata as $mail_data){
         
         $sendEmail = true;
         $status = '';
-        if(strpos(strtolower($mail_data['Type']), 'feedback') > -1){
+        if(strpos(strtolower($mail_data['Type']), 'feedback') > -1 || $mail_data['Type'] =="applicant_email" ){
             $sendEmail = true;
            
         }else if($mail_data["ClosedBy"] >= 1){

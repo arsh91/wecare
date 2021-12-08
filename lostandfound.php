@@ -104,7 +104,7 @@
                                         </div>
                                        
                                         <div class="form-group mb-3">
-                                            <label for="phone"> Phone Number</label>
+                                            <label for="phone">Cell phone (able to receive texts)</label>
                                             <input type="tel" name="phone" id="phone" class="form-control"
                                                 maxlength="20" required>
                                             <span id="errphonemsg"></span>
@@ -113,40 +113,7 @@
                                             <label for="email">Email</label>
                                             <input type="email" id="email" name="email" class="form-control" required>
                                         </div>
-                                        <div class="form-group mb-3">
-                                            <label for="shippingaddress">Shipping Address</label>
-                                            <textarea class="form-control rounded-0" id="shippingaddress"
-                                                name="shippingaddress" rows="0" required></textarea>
-                                            </textarea>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="shippingcity">Shipping City</label>
-                                            <input type="text" name="shippingcity" class="form-control" required>
-                                        </div>
-                                        <div class="form-group row mb-3">
-                                            <div class="col-md-6">
-                                            <label for="shippingstate">Shipping State</label>
-                                                <input type="text" name="shippingstate" class="form-control" required>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <label for="Zip">Zip </label>
-                                                <input type="tel" name="Zip" id="Zip" class="form-control"
-                                                maxlength="20" required>
-                                                <span id="errzipmsg"></span>
-                                            </div>
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="discriptionlostitem">Description of Lost Item</label>
-                                            <textarea class="form-control rounded-0" id="discriptionlostitem"
-                                                name="discriptionlostitem" rows="3" required></textarea>
-                                           
-                                        </div>
-                                        <div class="form-group mb-3">
-                                            <label for="bestguess">Best guess at where item 
-                                                was left (i.e. what room):</label>
-                                                <textarea class="form-control rounded-0" id="bestguess"
-                                                name="bestguess" rows="3" required></textarea>
-                                        </div>
+                                       
                                         <div class="form-group mb-3">
                                             <label for=""><strong>Select Shipping Method:</strong></label>
                                             <div class="form-check">
